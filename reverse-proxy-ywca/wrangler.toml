@@ -1,0 +1,13 @@
+name = "reverse-proxy-ywca"
+main = "src/worker.js"
+workers_dev = true
+preview_urls = true
+compatibility_date = "2025-10-03"
+
+[[routes]]
+pattern = "ywcaofmissoula.com/"
+zone_name = "ywcaofmissoula.com"
+
+[observability]
+enabled = true
+head_sampling_rate = 1
