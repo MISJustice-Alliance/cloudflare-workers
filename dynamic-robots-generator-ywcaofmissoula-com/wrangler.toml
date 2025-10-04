@@ -1,5 +1,4 @@
-# dynamic-robots-generator-ywcaofmissoula-com/wrangler.toml
-name = 'dynamic-robots-generator-ywcaofmissoula-com'
+name = "dynamic-robots-generator-ywcaofmissoula-com"
 main = "src/worker.ts"
 compatibility_date = "2024-12-18"
 compatibility_flags = ["nodejs_compat"]
@@ -17,7 +16,7 @@ ANALYTICS_ENABLED = "true"
 binding = "ROBOTS_CACHE"
 id = "994035050fab47688db9d3a164e4ba47"
 
-# Routes will be added after deployment
+# Routes for robots.txt
 [[routes]]
 pattern = "ywcaofmissoula.com/robots.txt"
 zone_name = "ywcaofmissoula.com"
