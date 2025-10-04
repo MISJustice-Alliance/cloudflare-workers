@@ -1,5 +1,6 @@
-name = "dynamic-robots-generator-ywcaofmissoula-com"
-main = "src/worker.js"
+# dynamic-robots-generator-ywcaofmissoula-com/wrangler.toml
+name = 'dynamic-robots-generator-ywcaofmissoula-com'
+main = "src/worker.ts"
 compatibility_date = "2024-12-18"
 compatibility_flags = ["nodejs_compat"]
 
@@ -14,17 +15,16 @@ ANALYTICS_ENABLED = "true"
 # KV namespace bindings
 [[kv_namespaces]]
 binding = "ROBOTS_CACHE"
-id = "your-kv-namespace-id"
-preview_id = "your-preview-kv-namespace-id"
+id = "994035050fab47688db9d3a164e4ba47"
 
-# Routes for robots.txt
-[[routes]]
-pattern = "ywcaofmissoula.com/robots.txt"
-zone_name = "ywcaofmissoula.com"
+# Routes will be added after deployment
+# [[routes]]
+# pattern = "ywcaofmissoula.com/robots.txt"
+# zone_name = "ywcaofmissoula.com"
 
-[[routes]]
-pattern = "www.ywcaofmissoula.com/robots.txt"
-zone_name = "ywcaofmissoula.com"
+# [[routes]]
+# pattern = "www.ywcaofmissoula.com/robots.txt"
+# zone_name = "ywcaofmissoula.com"
 
 # Development environment
 [env.dev]
@@ -47,11 +47,4 @@ head_sampling_rate = 1
 [limits]
 cpu_ms = 50
 
-# Build configuration
-[build]
-command = "npm run build"
-cwd = "."
-
-# TypeScript configuration
-[build.upload]
-format = "modules"
+# TypeScript is handled automatically by Wrangler
