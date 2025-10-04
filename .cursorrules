@@ -1,0 +1,374 @@
+# Cloudflare Workers - YWCAOfMissoula.com Project
+# AI IDE Configuration Rules
+
+## Project Context
+
+This repository contains Cloudflare Workers for the YWCAOfMissoula.com website, a comprehensive legal advocacy and evidence repository platform documenting systematic civil rights violations and institutional corruption. The project is maintained by the Anonymous Legal Assistance Group (MISJustice Alliance).
+
+### Project Purpose
+- Document and present systematic civil rights violations spanning 2014-2025
+- Serve as both advocacy tool and evidence repository for legal proceedings
+- Enable public awareness of institutional corruption patterns
+- Support legal professionals, journalists, and advocacy groups
+
+### Technical Architecture
+- **Primary CMS**: Notion workspace (headless CMS)
+- **Site Generator**: Super.so (Notion-to-website conversion)
+- **CDN & Security**: Cloudflare (CDN, WAF, DDoS protection)
+- **Workers**: Custom Cloudflare Workers for advanced functionality
+- **Repository**: GitHub with CI/CD pipeline
+
+## Core Responsibilities of Cloudflare Workers
+
+These workers must handle:
+1. **robots.txt generation** - Dynamic robot exclusion rules
+2. **sitemap.xml automation** - Automated sitemap generation and updates
+3. **llms.txt serving** - AI crawler guidance files (llms.txt, llms-full.txt)
+4. **Analytics enhancement** - Custom analytics and tracking
+5. **Security headers** - HTTP security header injection
+6. **Reverse proxy** - Routing and traffic management
+7. **Performance optimization** - Caching, compression, edge computing
+
+## Development Standards
+
+### Code Quality
+- Write clean, well-documented TypeScript/JavaScript code
+- Use modern ES6+ syntax and features
+- Implement comprehensive error handling with detailed logging
+- Follow functional programming patterns where appropriate
+- Optimize for edge computing constraints (CPU time, memory limits)
+
+### Security Requirements
+- **CRITICAL**: Never log or expose sensitive information
+- Validate all inputs and sanitize outputs
+- Implement rate limiting for abuse prevention
+- Use secure headers (CSP, HSTS, X-Frame-Options, etc.)
+- Follow OWASP security best practices
+- Implement GDPR compliance measures where applicable
+
+### Performance Standards
+- Target <50ms average response time
+- Minimize CPU time usage (stay well below 50ms limit)
+- Implement efficient caching strategies
+- Optimize KV reads/writes for cost efficiency
+- Use streaming responses for large content
+- Monitor and optimize for Core Web Vitals
+
+### Error Handling
+- Implement graceful degradation
+- Provide meaningful error messages (without exposing system details)
+- Log errors with context for debugging (timestamps, request IDs)
+- Use try-catch blocks comprehensively
+- Return appropriate HTTP status codes
+
+## Cloudflare Workers Best Practices
+
+### Worker Structure
+```typescript
+// Preferred structure for workers
+export default {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    try {
+      // Route handling
+      const url = new URL(request.url);
+      
+      // Implementation
+      
+    } catch (error) {
+      // Error handling
+      console.error('Worker error:', error);
+      return new Response('Internal Server Error', { status: 500 });
+    }
+  }
+};
+```
+
+### Environment Variables
+- Use `env` object for all configuration
+- Never hardcode secrets or API keys
+- Document all required environment variables
+- Use Wrangler secrets for sensitive data
+
+### KV Storage
+- Batch KV operations where possible
+- Implement TTL appropriately for cached content
+- Use consistent key naming conventions
+- Consider KV limits (1024 list operations per request)
+
+### Routing Patterns
+- Use URL pattern matching efficiently
+- Implement clean routing logic
+- Handle trailing slashes consistently
+- Support both HTTP and HTTPS
+
+### Caching Strategy
+- Leverage Cloudflare Cache API
+- Set appropriate cache headers
+- Implement cache keys strategically
+- Use stale-while-revalidate where appropriate
+
+## Project-Specific Requirements
+
+### robots.txt Worker
+- Generate dynamic robots.txt based on environment
+- Allow/disallow rules for different crawlers
+- Support for AI crawlers (GPTBot, Claude-Web, etc.)
+- Include sitemap reference
+- Handle rate limiting for excessive requests
+
+### sitemap.xml Worker
+- Generate sitemap from Notion database structure
+- Include all public pages with appropriate priority
+- Update lastmod timestamps accurately
+- Support sitemap index for large sites
+- Compress responses (gzip)
+
+### llms.txt Worker
+- Serve llms.txt with content optimization guidance
+- Generate llms-full.txt with comprehensive content mapping
+- Structure data for AI understanding
+- Include metadata about content organization
+- Version control for AI crawler compatibility
+
+### Analytics Worker
+- Enhance Google Analytics 4 data
+- Track custom events (document downloads, contact forms)
+- Respect DNT (Do Not Track) headers
+- Comply with privacy regulations
+- Minimize PII collection
+
+### Security Headers Worker
+- Inject comprehensive security headers
+- CSP: Content-Security-Policy with strict directives
+- HSTS: HTTP Strict Transport Security
+- X-Frame-Options: DENY
+- X-Content-Type-Options: nosniff
+- Referrer-Policy: strict-origin-when-cross-origin
+- Permissions-Policy: appropriate restrictions
+
+## Testing Requirements
+
+### Unit Testing
+- Write tests for all critical functions
+- Use Vitest or Jest for testing
+- Mock Cloudflare runtime APIs
+- Test edge cases and error conditions
+- Aim for >80% code coverage
+
+### Integration Testing
+- Test worker behavior in dev environment
+- Validate against production-like data
+- Test caching behavior
+- Verify header injection
+- Test rate limiting
+
+### Load Testing
+- Simulate realistic traffic patterns
+- Test under burst conditions
+- Verify performance under load
+- Monitor memory usage
+- Test KV operation limits
+
+## Deployment Standards
+
+### Wrangler Configuration
+- Use wrangler.toml for configuration
+- Separate dev/staging/production environments
+- Document all KV namespaces and bindings
+- Version control wrangler.toml
+- Use environment-specific settings
+
+### CI/CD Pipeline
+- Automated testing before deployment
+- Staged rollout (dev → staging → production)
+- Automated rollback on errors
+- Deployment notifications
+- Version tagging
+
+### Monitoring
+- Set up Cloudflare Analytics
+- Configure error alerting
+- Monitor performance metrics
+- Track KV usage and costs
+- Log aggregation and analysis
+
+## Documentation Standards
+
+### Code Documentation
+- JSDoc comments for all exported functions
+- Inline comments for complex logic
+- README.md for each worker
+- Architecture decision records (ADRs)
+- API documentation where applicable
+
+### README Requirements
+Each worker should include:
+- Purpose and functionality
+- Configuration requirements
+- Environment variables needed
+- Deployment instructions
+- Testing procedures
+- Troubleshooting guide
+
+## Legal and Compliance Considerations
+
+### Content Integrity
+- Maintain evidence chain of custody
+- Ensure document authenticity
+- Preserve metadata accurately
+- Version control all changes
+- Audit trail for modifications
+
+### Privacy Protection
+- Redact sensitive information appropriately
+- Respect privacy rights
+- GDPR compliance where applicable
+- Minimize data collection
+- Secure data transmission
+
+### Accessibility
+- Support WCAG 2.1 AA standards
+- Ensure content is accessible
+- Proper semantic HTML
+- Alt text for images
+- Keyboard navigation support
+
+## Common Pitfalls to Avoid
+
+1. **Exceeding CPU Time**: Workers have 50ms CPU time limit on free tier
+2. **KV Rate Limits**: Don't exceed 1000 writes/second per key
+3. **Request Size Limits**: Maximum 100MB request/response size
+4. **Subrequest Limits**: Maximum 50 subrequests per worker
+5. **Memory Limits**: 128MB memory limit per worker
+6. **Unhandled Promises**: Always await or handle async operations
+7. **Blocking I/O**: Use async/await, never synchronous operations
+8. **Excessive Logging**: Minimize console.log in production
+9. **Missing Error Handlers**: Always implement comprehensive error handling
+10. **Hardcoded Values**: Use environment variables for configuration
+
+## Optimization Techniques
+
+### Performance
+- Minimize regex usage in hot paths
+- Use static routing tables when possible
+- Lazy load large dependencies
+- Stream responses for large content
+- Use Workers KV for distributed caching
+
+### Cost Optimization
+- Batch KV operations
+- Implement intelligent caching
+- Minimize subrequests
+- Use free tier efficiently
+- Monitor and optimize based on metrics
+
+### Code Organization
+- Modular code structure
+- Separate concerns (routing, logic, data access)
+- Reusable utility functions
+- Type safety with TypeScript
+- Consistent naming conventions
+
+## Version Control
+
+### Git Practices
+- Descriptive commit messages
+- Feature branches for development
+- Pull requests for code review
+- Semantic versioning for releases
+- Tag production deployments
+
+### Branch Strategy
+- `main`: Production-ready code
+- `develop`: Integration branch
+- `feature/*`: Feature development
+- `hotfix/*`: Emergency fixes
+- `release/*`: Release preparation
+
+## When Helping with Code
+
+1. **Ask Clarifying Questions**: Before generating code, understand:
+   - Which worker is being modified?
+   - What is the specific requirement?
+   - Are there performance constraints?
+   - What are the security implications?
+
+2. **Consider the Context**: 
+   - This is a legal advocacy platform
+   - Content integrity is paramount
+   - Security and privacy are critical
+   - Performance affects user experience
+
+3. **Provide Complete Solutions**:
+   - Include error handling
+   - Add relevant comments
+   - Suggest testing approaches
+   - Consider edge cases
+   - Document assumptions
+
+4. **Follow Standards**:
+   - Use TypeScript when possible
+   - Follow existing code patterns
+   - Match project style guide
+   - Include proper types
+   - Write self-documenting code
+
+## Helpful Commands
+
+```bash
+# Local development
+wrangler dev
+
+# Deploy to production
+wrangler deploy
+
+# Tail logs
+wrangler tail
+
+# Test worker
+wrangler dev --test
+
+# Manage KV
+wrangler kv:namespace create <NAME>
+wrangler kv:key put --namespace-id=<ID> "<KEY>" "<VALUE>"
+wrangler kv:key get --namespace-id=<ID> "<KEY>"
+
+# Manage secrets
+wrangler secret put <NAME>
+wrangler secret list
+```
+
+## Resources
+
+- [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
+- [Workers Examples](https://developers.cloudflare.com/workers/examples/)
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/)
+- [Workers Runtime APIs](https://developers.cloudflare.com/workers/runtime-apis/)
+- [Workers Limits](https://developers.cloudflare.com/workers/platform/limits/)
+
+## Project-Specific Context
+
+### Target Keywords (for SEO optimization)
+- "Missoula police misconduct"
+- "YWCA institutional corruption"
+- "Montana civil rights violations"
+- "Legal malpractice Montana"
+- "First Amendment retaliation"
+- "Prosecutorial misconduct"
+- "Elvis Nuno case"
+
+### Success Metrics
+- Page load times <3 seconds
+- 99.9% uptime
+- Search engine ranking improvements
+- Document download tracking
+- Contact form submissions
+- Social media engagement
+
+### Key Stakeholders
+- Legal professionals (attorneys seeking case information)
+- Journalists and researchers (media coverage)
+- Legal advocacy groups (institutional reform)
+- Public audience (transparency and awareness)
+
+Remember: This platform serves a critical public interest function. Code quality, security, and reliability are not just technical requirements—they support the pursuit of justice and institutional accountability.

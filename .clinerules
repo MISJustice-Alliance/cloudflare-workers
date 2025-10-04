@@ -1,0 +1,610 @@
+# Cline AI IDE Configuration - Cloudflare Workers for YWCAOfMissoula.com
+# Optimized for autonomous coding agent workflows
+
+## Project Identity
+
+**Repository**: cloudflare-workers (YWCAOfMissoula.com)
+**Organization**: MISJustice Alliance (Anonymous Legal Assistance Group)
+**Mission**: Legal advocacy platform documenting civil rights violations and institutional corruption
+**Tech Stack**: Cloudflare Workers, TypeScript/JavaScript, Wrangler CLI
+
+## Autonomous Agent Guidelines
+
+### Decision-Making Framework
+
+When performing tasks autonomously, follow this decision tree:
+
+1. **Understand the Request**
+   - What worker needs modification?
+   - What is the specific functionality required?
+   - Are there security implications?
+   - What are the performance requirements?
+
+2. **Plan the Implementation**
+   - Identify affected files
+   - Determine if new dependencies are needed
+   - Consider edge cases and error scenarios
+   - Plan testing strategy
+
+3. **Execute with Confidence**
+   - Make changes directly when requirements are clear
+   - Follow established patterns in existing code
+   - Implement comprehensive error handling
+   - Add appropriate logging and comments
+
+4. **Validate and Test**
+   - Run tests if available
+   - Check for TypeScript/ESLint errors
+   - Verify wrangler configuration
+   - Suggest manual testing steps
+
+### File Operations
+
+**When to Create New Workers**:
+- New functionality that's logically separate
+- Different routing requirements
+- Distinct caching strategies
+- Separate security policies
+
+**Worker Directory Structure** (follow this pattern):
+```
+worker-name/
+├── src/
+│   ├── worker.ts (or worker.js)
+│   ├── handlers/
+│   │   └── routeHandlers.ts
+│   ├── utils/
+│   │   └── helpers.ts
+│   └── types/
+│       └── index.ts
+├── tests/
+│   └── worker.test.ts
+├── wrangler.toml
+├── package.json
+├── tsconfig.json (if TypeScript)
+└── README.md
+```
+
+## Code Generation Standards
+
+### TypeScript/JavaScript Patterns
+
+**Worker Entry Point** (always use this structure):
+```typescript
+export interface Env {
+  // Define all environment variables and bindings
+  NOTION_API_KEY?: string;
+  KV_NAMESPACE?: KVNamespace;
+  ENVIRONMENT?: string;
+}
+
+export default {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<Response> {
+    try {
+      const url = new URL(request.url);
+      
+      // Routing logic
+      if (url.pathname === '/robots.txt') {
+        return handleRobotsTxt(request, env);
+      }
+      
+      // Default response
+      return new Response('Not Found', { status: 404 });
+      
+    } catch (error) {
+      console.error('Worker error:', error);
+      return new Response(
+        'Internal Server Error', 
+        { 
+          status: 500,
+          headers: { 'Content-Type': 'text/plain' }
+        }
+      );
+    }
+  }
+};
+```
+
+**Error Handling Pattern** (always implement):
+```typescript
+async function safeHandler<T>(
+  operation: () => Promise<T>,
+  fallback: T
+): Promise<T> {
+  try {
+    return await operation();
+  } catch (error) {
+    console.error('Operation failed:', error);
+    return fallback;
+  }
+}
+```
+
+**Response Helper Functions** (create these utilities):
+```typescript
+// JSON response with proper headers
+function jsonResponse(data: any, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache'
+    }
+  });
+}
+
+// Text response with caching
+function textResponse(
+  text: string, 
+  status = 200, 
+  maxAge = 3600
+): Response {
+  return new Response(text, {
+    status,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': `public, max-age=${maxAge}`
+    }
+  });
+}
+
+// Security headers wrapper
+function secureResponse(response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set('X-Content-Type-Options', 'nosniff');
+  headers.set('X-Frame-Options', 'DENY');
+  headers.set('X-XSS-Protection', '1; mode=block');
+  headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  });
+}
+```
+
+### Wrangler Configuration
+
+**Standard wrangler.toml template**:
+```toml
+name = "worker-name"
+main = "src/worker.js"
+compatibility_date = "2024-01-01"
+account_id = "" # Set during deployment
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+
+# KV Namespaces (if needed)
+# [[kv_namespaces]]
+# binding = "KV_NAMESPACE"
+# id = ""
+
+# Routes
+[routes]
+pattern = "ywcaofmissoula.com/path/*"
+zone_name = "ywcaofmissoula.com"
+
+# Build configuration
+[build]
+command = ""
+
+# Development settings
+[env.development]
+vars = { ENVIRONMENT = "development" }
+
+# Staging settings
+[env.staging]
+vars = { ENVIRONMENT = "staging" }
+```
+
+## SEO & GEO Implementation
+
+### robots.txt Worker Requirements
+
+Generate dynamic robots.txt with these capabilities:
+- Environment-aware rules (dev vs production)
+- AI crawler-specific directives
+- Rate limiting for aggressive crawlers
+- Sitemap reference
+- Custom user-agent handling
+
+**Template Structure**:
+```
+User-agent: *
+Disallow: /admin/
+Disallow: /api/private/
+Crawl-delay: 1
+
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 2
+
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 2
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://ywcaofmissoula.com/sitemap.xml
+```
+
+### llms.txt Worker Requirements
+
+Serve AI-optimized content maps with:
+- Clear content hierarchy
+- Key entity definitions
+- Relationship mappings
+- Fact-based summaries
+- Version information
+
+**Format**:
+```markdown
+# YWCAOfMissoula.com - Civil Rights Advocacy Platform
+
+## Purpose
+Documentation and evidence repository for systematic civil rights violations and institutional corruption in Missoula, Montana (2014-2025).
+
+## Key Entities
+- Elvis Nuno: Primary subject, victim of civil rights violations
+- YWCA of Missoula: Non-profit organization, conflict of interest
+- Missoula Police Department: Law enforcement agency involved
+- Detective Brueckner: MPD officer with YWCA board affiliation
+
+## Content Structure
+1. Executive Summary: /summary
+2. Legal Timeline: /timeline
+3. Document Library: /documents
+4. Constitutional Violations: /violations
+5. Evidence Repository: /evidence
+
+## Key Facts
+- Time Span: 2014-2025
+- Jurisdictions: Montana, Washington State
+- Constitutional Issues: 1st Amendment, 4th Amendment, 14th Amendment
+- Documented Damages: $3.44M+
+```
+
+### sitemap.xml Worker Requirements
+
+Generate comprehensive XML sitemaps with:
+- All public pages with priority ratings
+- Last modification timestamps
+- Change frequency indicators
+- Image and document sitemaps
+- Multi-lingual support (if applicable)
+
+**Priority Guidelines**:
+- Homepage: 1.0
+- Executive Summary: 1.0
+- Legal Timeline: 0.9
+- Document Library: 0.9
+- Individual Documents: 0.7
+- Supporting Pages: 0.5
+
+## Security Requirements
+
+### CRITICAL Security Rules
+
+1. **Never Log Sensitive Data**:
+   - No PII in console.log
+   - No API keys in logs
+   - No user identifiers in error messages
+   - Redact sensitive content in debug output
+
+2. **Input Validation**:
+   ```typescript
+   function sanitizeInput(input: string): string {
+     return input
+       .trim()
+       .replace(/[<>]/g, '') // Remove HTML tags
+       .substring(0, 1000); // Limit length
+   }
+   ```
+
+3. **Rate Limiting**:
+   ```typescript
+   async function checkRateLimit(
+     ip: string,
+     kv: KVNamespace
+   ): Promise<boolean> {
+     const key = `ratelimit:${ip}`;
+     const count = await kv.get(key);
+     
+     if (count && parseInt(count) > 100) {
+       return false; // Rate limit exceeded
+     }
+     
+     await kv.put(
+       key, 
+       (parseInt(count || '0') + 1).toString(),
+       { expirationTtl: 60 } // 1 minute window
+     );
+     
+     return true;
+   }
+   ```
+
+4. **Headers** (always include):
+   - `Content-Security-Policy`
+   - `X-Content-Type-Options: nosniff`
+   - `X-Frame-Options: DENY`
+   - `Strict-Transport-Security`
+   - `Permissions-Policy`
+
+## Performance Optimization
+
+### Caching Strategy
+
+**Cache Levels**:
+1. **Browser Cache**: Use `Cache-Control` headers
+2. **Cloudflare Cache**: Use Cache API
+3. **KV Cache**: For dynamic content
+
+**Cache Duration Guidelines**:
+- Static assets: 1 year (31536000s)
+- HTML pages: 1 hour (3600s)
+- API responses: 5 minutes (300s)
+- Dynamic content: No cache
+
+**Implementation**:
+```typescript
+async function cacheResponse(
+  request: Request,
+  response: Response,
+  ttl: number
+): Promise<Response> {
+  const cache = caches.default;
+  const cacheKey = new Request(request.url, request);
+  
+  // Store in cache with TTL
+  const cachedResponse = new Response(response.body, response);
+  cachedResponse.headers.set(
+    'Cache-Control',
+    `public, max-age=${ttl}`
+  );
+  
+  await cache.put(cacheKey, cachedResponse.clone());
+  return cachedResponse;
+}
+```
+
+### KV Optimization
+
+**Best Practices**:
+- Batch reads when possible
+- Use consistent key prefixes
+- Implement expiration (TTL)
+- Monitor usage and costs
+
+**Key Naming Convention**:
+```
+{environment}:{type}:{identifier}
+Examples:
+- prod:sitemap:pages
+- prod:cache:homepage
+- dev:config:settings
+```
+
+## Testing Guidelines
+
+### Test Structure
+```typescript
+import { describe, it, expect } from 'vitest';
+
+describe('Worker Tests', () => {
+  it('should handle valid requests', async () => {
+    const request = new Request('https://example.com/test');
+    const env = {};
+    const ctx = {
+      waitUntil: () => {},
+      passThroughOnException: () => {}
+    };
+    
+    const response = await worker.fetch(request, env, ctx);
+    expect(response.status).toBe(200);
+  });
+  
+  it('should handle errors gracefully', async () => {
+    // Error test implementation
+  });
+});
+```
+
+### Manual Testing Checklist
+- [ ] Test in `wrangler dev` locally
+- [ ] Verify environment variables work
+- [ ] Check error handling paths
+- [ ] Validate caching behavior
+- [ ] Test rate limiting
+- [ ] Verify security headers
+- [ ] Check CORS if applicable
+- [ ] Test with different user agents
+
+## Deployment Workflow
+
+### Pre-Deployment Checklist
+1. Run tests: `npm test`
+2. Lint code: `npm run lint`
+3. Build if needed: `npm run build`
+4. Review changes: `git diff`
+5. Update version in package.json
+6. Update CHANGELOG.md
+
+### Deployment Commands
+```bash
+# Development environment
+wrangler deploy --env development
+
+# Staging environment
+wrangler deploy --env staging
+
+# Production environment
+wrangler deploy --env production
+
+# Verify deployment
+wrangler tail --env production
+```
+
+### Post-Deployment Validation
+1. Check worker is running: `wrangler tail`
+2. Test endpoints manually
+3. Monitor error rates
+4. Verify analytics data
+5. Check performance metrics
+
+## Common Tasks
+
+### Add New Route
+```typescript
+// In worker.ts
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+    
+    // Add new route
+    if (url.pathname === '/new-route') {
+      return handleNewRoute(request, env);
+    }
+    
+    // ... existing routes
+  }
+};
+
+// Create handler function
+async function handleNewRoute(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  // Implementation
+  return new Response('New route response');
+}
+```
+
+### Add Environment Variable
+1. Add to wrangler.toml:
+   ```toml
+   [vars]
+   NEW_VAR = "value"
+   ```
+
+2. Update Env interface:
+   ```typescript
+   export interface Env {
+     NEW_VAR?: string;
+   }
+   ```
+
+3. Use in code:
+   ```typescript
+   const value = env.NEW_VAR || 'default';
+   ```
+
+### Add KV Namespace
+1. Create namespace:
+   ```bash
+   wrangler kv:namespace create "NAMESPACE_NAME"
+   ```
+
+2. Add to wrangler.toml:
+   ```toml
+   [[kv_namespaces]]
+   binding = "NAMESPACE_NAME"
+   id = "your-namespace-id"
+   ```
+
+3. Update Env interface:
+   ```typescript
+   export interface Env {
+     NAMESPACE_NAME?: KVNamespace;
+   }
+   ```
+
+## Project Context
+
+This is a **legal advocacy platform** with serious real-world implications:
+- Code quality affects access to justice
+- Security protects vulnerable individuals
+- Performance impacts user experience during crisis
+- Reliability ensures evidence availability
+
+Every line of code serves the mission of **exposing institutional corruption and protecting civil rights**.
+
+## Helpful Commands Reference
+
+```bash
+# Development
+wrangler dev                    # Start local dev server
+wrangler dev --remote          # Dev with remote resources
+wrangler tail                  # Stream logs
+wrangler tail --format pretty  # Pretty logs
+
+# Deployment
+wrangler deploy                # Deploy to production
+wrangler deploy --dry-run      # Preview deployment
+wrangler deploy --env staging  # Deploy to staging
+
+# KV Operations
+wrangler kv:namespace list
+wrangler kv:key list --namespace-id=<ID>
+wrangler kv:key get <KEY> --namespace-id=<ID>
+wrangler kv:key put <KEY> <VALUE> --namespace-id=<ID>
+
+# Secrets
+wrangler secret put <NAME>
+wrangler secret list
+wrangler secret delete <NAME>
+
+# Analytics
+wrangler analytics <WORKER_NAME>
+
+# Troubleshooting
+wrangler whoami               # Check auth
+wrangler logout               # Logout
+wrangler login                # Login
+```
+
+## When Generating Code
+
+1. **Always include**:
+   - Complete error handling
+   - Proper TypeScript types
+   - Security headers
+   - Performance optimizations
+   - Inline documentation
+
+2. **Never include**:
+   - Hardcoded secrets
+   - Console.log in production
+   - Synchronous blocking operations
+   - Unhandled promises
+   - Missing error cases
+
+3. **Ask for clarification when**:
+   - Security implications are unclear
+   - Performance requirements not specified
+   - Multiple implementation approaches exist
+   - Legal/privacy considerations exist
+
+## Success Criteria
+
+Code is production-ready when:
+- ✅ All error paths handled
+- ✅ Security headers implemented
+- ✅ Performance optimized
+- ✅ Tests passing
+- ✅ Documentation complete
+- ✅ No hardcoded values
+- ✅ Follows project patterns
+- ✅ Wrangler config correct
+- ✅ Environment vars defined
+- ✅ Ready for deployment
+
+Remember: This platform serves justice. Write code with that responsibility in mind.

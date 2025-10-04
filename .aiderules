@@ -1,0 +1,298 @@
+# Aider AI Configuration - Cloudflare Workers Development
+# Optimized for AI pair programming and code editing
+
+## Project Overview
+
+**Name**: YWCAOfMissoula.com Cloudflare Workers
+**Purpose**: Legal advocacy platform infrastructure
+**Organization**: MISJustice Alliance
+**Tech**: Cloudflare Workers, TypeScript/JavaScript, Wrangler
+
+## Aider-Specific Settings
+
+### Edit Mode Preferences
+- Prefer "whole" mode for new files
+- Use "diff" mode for existing file modifications
+- Use "udiff" mode for large file changes
+
+### Code Style
+- Language: TypeScript/JavaScript
+- Formatting: Prettier with 2-space indentation
+- Line length: 80-100 characters
+- Use single quotes for strings
+- Trailing commas in multi-line structures
+
+## File Patterns
+
+### Worker Structure
+```
+worker-name/
+├── src/
+│   └── worker.ts          # Main entry point
+├── tests/
+│   └── worker.test.ts     # Tests
+├── wrangler.toml          # Cloudflare config
+├── package.json           # Dependencies
+└── README.md              # Documentation
+```
+
+### Typical Edit Patterns
+
+**When adding a new route**:
+1. Modify `src/worker.ts` - add route handler
+2. Create handler function or file
+3. Add tests in `tests/`
+4. Update README.md with new endpoint
+
+**When adding environment variable**:
+1. Add to `wrangler.toml` [vars] section
+2. Update Env interface in `src/worker.ts`
+3. Document in README.md
+
+**When creating new worker**:
+1. Create directory with standard structure
+2. Copy template files
+3. Update wrangler.toml with unique name
+4. Add to root README.md
+
+## Code Templates
+
+### Worker Entry Point
+```typescript
+export interface Env {
+  // Environment variables
+}
+
+export default {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<Response> {
+    try {
+      const url = new URL(request.url);
+      // Route handling
+      return new Response('OK');
+    } catch (error) {
+      console.error('Error:', error);
+      return new Response('Error', { status: 500 });
+    }
+  }
+};
+```
+
+### Route Handler Template
+```typescript
+async function handleRoute(
+  request: Request,
+  env: Env
+): Promise<Response> {
+  try {
+    // Implementation
+    return new Response('Success', {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    console.error('Handler error:', error);
+    throw error;
+  }
+}
+```
+
+## Common Modifications
+
+### Add Security Headers
+```typescript
+function addSecurityHeaders(response: Response): Response {
+  const headers = new Headers(response.headers);
+  headers.set('X-Content-Type-Options', 'nosniff');
+  headers.set('X-Frame-Options', 'DENY');
+  headers.set('X-XSS-Protection', '1; mode=block');
+  return new Response(response.body, {
+    status: response.status,
+    headers
+  });
+}
+```
+
+### Implement Caching
+```typescript
+async function getCached(
+  key: string,
+  fetcher: () => Promise<Response>,
+  ttl: number = 3600
+): Promise<Response> {
+  const cache = caches.default;
+  const cacheKey = new Request(key);
+  
+  let response = await cache.match(cacheKey);
+  
+  if (!response) {
+    response = await fetcher();
+    response.headers.set('Cache-Control', `max-age=${ttl}`);
+    await cache.put(cacheKey, response.clone());
+  }
+  
+  return response;
+}
+```
+
+### Add Rate Limiting
+```typescript
+async function rateLimit(
+  ip: string,
+  kv: KVNamespace,
+  limit: number = 100
+): Promise<boolean> {
+  const key = `ratelimit:${ip}`;
+  const current = await kv.get(key);
+  const count = parseInt(current || '0');
+  
+  if (count >= limit) return false;
+  
+  await kv.put(key, (count + 1).toString(), {
+    expirationTtl: 60
+  });
+  
+  return true;
+}
+```
+
+## Testing Patterns
+
+### Unit Test Template
+```typescript
+import { describe, it, expect } from 'vitest';
+import worker from '../src/worker';
+
+describe('Worker', () => {
+  it('should respond to requests', async () => {
+    const request = new Request('https://example.com/');
+    const env = {};
+    const ctx = {
+      waitUntil: () => {},
+      passThroughOnException: () => {}
+    };
+    
+    const response = await worker.fetch(request, env, ctx);
+    expect(response.status).toBe(200);
+  });
+});
+```
+
+## Critical Rules
+
+1. **Never hardcode secrets** - use environment variables
+2. **Always handle errors** - no unhandled promises
+3. **Include security headers** - on all responses
+4. **Validate inputs** - sanitize user data
+5. **Log appropriately** - no sensitive data in logs
+6. **Optimize performance** - mind CPU time limits
+7. **Test thoroughly** - cover error cases
+8. **Document changes** - update README
+
+## Edit Workflow
+
+### For Small Changes
+```bash
+# Use diff mode for targeted edits
+aider --edit-format diff src/worker.ts
+```
+
+### For New Features
+```bash
+# Use whole mode for comprehensive changes
+aider --edit-format whole src/worker.ts tests/worker.test.ts
+```
+
+### For Refactoring
+```bash
+# Include all related files
+aider src/worker.ts src/handlers/*.ts tests/*.ts
+```
+
+## Verification Steps
+
+After each edit:
+1. Check syntax: `npm run build` or `tsc`
+2. Run tests: `npm test`
+3. Lint: `npm run lint`
+4. Local test: `wrangler dev`
+5. Deploy test: `wrangler deploy --dry-run`
+
+## Project-Specific Context
+
+**Mission**: Legal advocacy platform documenting civil rights violations
+**Audience**: Legal professionals, journalists, advocacy groups
+**Stakes**: High - affects access to justice
+**Security**: Critical - protects vulnerable individuals
+**Performance**: Important - crisis situations require fast access
+
+## Quick Reference
+
+### Common Files to Edit
+- `src/worker.ts` - Main worker logic
+- `wrangler.toml` - Configuration
+- `package.json` - Dependencies
+- `README.md` - Documentation
+
+### Common Commands
+```bash
+wrangler dev          # Local development
+wrangler deploy       # Deploy to production
+wrangler tail         # View logs
+npm test              # Run tests
+npm run lint          # Lint code
+```
+
+### Environment Variables Pattern
+```toml
+# wrangler.toml
+[vars]
+VAR_NAME = "value"
+
+[env.development.vars]
+VAR_NAME = "dev-value"
+
+[env.production.vars]
+VAR_NAME = "prod-value"
+```
+
+## Aider Tips
+
+- Use `/add` to add files to context
+- Use `/drop` to remove files from context
+- Use `/run` to execute commands
+- Use `/test` to run tests
+- Use `/commit` for atomic commits
+- Use `/diff` to review changes
+- Use `/undo` to revert changes
+
+## Context Management
+
+**Always include in context when editing**:
+- The worker file being modified
+- Related test files
+- wrangler.toml if changing config
+- README.md if documenting
+
+**Keep context focused**:
+- Don't load entire repository
+- Add files as needed
+- Remove unrelated files
+- Use `/tokens` to check context size
+
+## Quality Checklist
+
+Before committing:
+- [ ] Code follows TypeScript best practices
+- [ ] Error handling is comprehensive
+- [ ] Security headers are included
+- [ ] Tests are added/updated
+- [ ] Documentation is updated
+- [ ] No hardcoded secrets
+- [ ] Performance is optimized
+- [ ] Logs are appropriate
+
+Remember: Every change serves the mission of justice and accountability.

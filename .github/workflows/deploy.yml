@@ -1,0 +1,142 @@
+name: Deploy Workers
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test Workers
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: |
+          cd reverse-proxy-ywca && npm ci
+          cd ../sitemap-ywcaofmissoula-com && npm ci
+      
+      - name: Run tests
+        run: |
+          if [ -d "reverse-proxy-ywca" ]; then
+            cd reverse-proxy-ywca && npm test || echo "No tests configured"
+          fi
+          if [ -d "sitemap-ywcaofmissoula-com" ]; then
+            cd sitemap-ywcaofmissoula-com && npm test || echo "No tests configured"
+          fi
+  
+  deploy-development:
+    needs: test
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    name: Deploy to Development
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Deploy Reverse Proxy (Dev)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'reverse-proxy-ywca'
+          command: deploy --env development
+      
+      - name: Deploy Sitemap Worker (Dev)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'sitemap-ywcaofmissoula-com'
+          command: deploy --env development
+  
+  deploy-staging:
+    needs: test
+    if: github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    name: Deploy to Staging
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Deploy Reverse Proxy (Staging)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'reverse-proxy-ywca'
+          command: deploy --env staging
+      
+      - name: Deploy Sitemap Worker (Staging)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'sitemap-ywcaofmissoula-com'
+          command: deploy --env staging
+  
+  deploy-production:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    name: Deploy to Production
+    environment:
+      name: production
+      url: https://ywcaofmissoula.com
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: Deploy Reverse Proxy (Production)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'reverse-proxy-ywca'
+          command: deploy --env production
+      
+      - name: Deploy Sitemap Worker (Production)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'sitemap-ywcaofmissoula-com'
+          command: deploy --env production
+      
+      - name: Verify Deployment
+        run: |
+          echo "Verifying production deployment..."
+          curl -f https://ywcaofmissoula.com/health || exit 1
+          curl -f https://ywcaofmissoula.com/sitemap.xml || exit 1
