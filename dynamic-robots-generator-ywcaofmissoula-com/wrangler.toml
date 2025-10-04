@@ -18,13 +18,13 @@ binding = "ROBOTS_CACHE"
 id = "994035050fab47688db9d3a164e4ba47"
 
 # Routes will be added after deployment
-# [[routes]]
-# pattern = "ywcaofmissoula.com/robots.txt"
-# zone_name = "ywcaofmissoula.com"
+[[routes]]
+pattern = "ywcaofmissoula.com/robots.txt"
+zone_name = "ywcaofmissoula.com"
 
-# [[routes]]
-# pattern = "www.ywcaofmissoula.com/robots.txt"
-# zone_name = "ywcaofmissoula.com"
+[[routes]]
+pattern = "www.ywcaofmissoula.com/robots.txt"
+zone_name = "ywcaofmissoula.com"
 
 # Development environment
 [env.dev]
