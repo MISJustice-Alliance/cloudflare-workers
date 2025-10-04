@@ -530,8 +530,8 @@ export default {
       
       // Extract request information
       const userAgent = request.headers.get('user-agent') || 'Unknown';
-      const country = request.cf?.country || 'US';
-      const ip = request.cf?.clientIP || request.headers.get('cf-connecting-ip') || 'unknown';
+      const country = (request.cf?.country as string) || 'US';
+      const ip = (request.cf?.clientIP as string) || request.headers.get('cf-connecting-ip') || 'unknown';
       
       // Initialize rate limiter
       const rateLimiter = new RateLimiter(
@@ -598,7 +598,7 @@ export default {
       // Log analytics if enabled
       if (env.ANALYTICS_ENABLED === 'true') {
         ctx.waitUntil(
-          this.logAnalytics({
+          logAnalytics({
             userAgent,
             country,
             ip,
@@ -638,26 +638,26 @@ Host: https://ywcaofmissoula.com
         }
       });
     }
-  },
-  
-  /**
-   * Log analytics data (async, non-blocking)
-   */
-  async logAnalytics(data: {
-    userAgent: string;
-    country: string;
-    ip: string;
-    processingTime: number;
-    cacheHit: boolean;
-  }): Promise<void> {
-    try {
-      // This would integrate with your analytics system
-      console.log('Analytics:', {
-        timestamp: new Date().toISOString(),
-        ...data
-      });
-    } catch (error) {
-      console.error('Analytics logging error:', error);
-    }
   }
 };
+
+/**
+ * Log analytics data (async, non-blocking)
+ */
+async function logAnalytics(data: {
+  userAgent: string;
+  country: string;
+  ip: string;
+  processingTime: number;
+  cacheHit: boolean;
+}): Promise<void> {
+  try {
+    // This would integrate with your analytics system
+    console.log('Analytics:', {
+      timestamp: new Date().toISOString(),
+      ...data
+    });
+  } catch (error) {
+    console.error('Analytics logging error:', error);
+  }
+}
