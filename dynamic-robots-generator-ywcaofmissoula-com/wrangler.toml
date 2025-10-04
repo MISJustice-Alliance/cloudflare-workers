@@ -4,8 +4,14 @@ workers_dev = true
 preview_urls = true
 compatibility_date = "2025-10-03"
 
+# Route for root domain
 [[routes]]
-pattern = "*ywcaofmissoula.com/robots.txt"
+pattern = "ywcaofmissoula.com/robots.txt"
+zone_name = "ywcaofmissoula.com"
+
+# Route for www subdomain
+[[routes]]
+pattern = "www.ywcaofmissoula.com/robots.txt"
 zone_name = "ywcaofmissoula.com"
 
 [observability]
