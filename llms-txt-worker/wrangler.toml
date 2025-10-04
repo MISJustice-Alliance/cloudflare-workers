@@ -1,0 +1,58 @@
+name = "llms-txt-ywca"
+main = "src/worker.ts"
+compatibility_date = "2024-01-01"
+
+# Worker configuration
+workers_dev = true
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+
+# KV Namespace for content caching (optional)
+# [[kv_namespaces]]
+# binding = "LLMS_CONTENT"
+# id = "production-llms-content-id"
+
+# Routes
+[[routes]]
+pattern = "ywcaofmissoula.com/llms.txt"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "ywcaofmissoula.com/llms-full.txt"
+zone_name = "ywcaofmissoula.com"
+
+# Development environment
+[env.development]
+name = "llms-txt-ywca-dev"
+vars = { ENVIRONMENT = "development" }
+
+# [[env.development.kv_namespaces]]
+# binding = "LLMS_CONTENT"
+# id = "development-llms-content-id"
+
+[[env.development.routes]]
+pattern = "dev.ywcaofmissoula.com/llms.txt"
+zone_name = "dev.ywcaofmissoula.com"
+
+[[env.development.routes]]
+pattern = "dev.ywcaofmissoula.com/llms-full.txt"
+zone_name = "dev.ywcaofmissoula.com"
+
+# Staging environment
+[env.staging]
+name = "llms-txt-ywca-staging"
+vars = { ENVIRONMENT = "staging" }
+
+# [[env.staging.kv_namespaces]]
+# binding = "LLMS_CONTENT"
+# id = "staging-llms-content-id"
+
+[[env.staging.routes]]
+pattern = "staging.ywcaofmissoula.com/llms.txt"
+zone_name = "staging.ywcaofmissoula.com"
+
+[[env.staging.routes]]
+pattern = "staging.ywcaofmissoula.com/llms-full.txt"
+zone_name = "staging.ywcaofmissoula.com"

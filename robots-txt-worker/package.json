@@ -1,0 +1,29 @@
+{
+  "name": "robots-txt-ywca",
+  "version": "1.0.0",
+  "description": "Dynamic robots.txt generator for YWCAOfMissoula.com with AI crawler optimization",
+  "main": "src/worker.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:dev": "wrangler deploy --env development",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "tail": "wrangler tail",
+    "tail:production": "wrangler tail --env production"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "robots-txt",
+    "seo",
+    "geo",
+    "ai-optimization"
+  ],
+  "author": "MISJustice Alliance",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^3.0.0"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "llms-txt-ywca",
+  "version": "1.0.0",
+  "description": "AI optimization file server for YWCAOfMissoula.com - serves llms.txt and llms-full.txt for LLM crawlers",
+  "main": "src/worker.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:dev": "wrangler deploy --env development",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "tail": "wrangler tail",
+    "tail:production": "wrangler tail --env production",
+    "kv:create": "wrangler kv:namespace create LLMS_CONTENT",
+    "kv:upload": "node scripts/upload-content.js"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "llms-txt",
+    "ai-optimization",
+    "geo",
+    "llm-crawlers"
+  ],
+  "author": "MISJustice Alliance",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^3.0.0"
+  }
+}

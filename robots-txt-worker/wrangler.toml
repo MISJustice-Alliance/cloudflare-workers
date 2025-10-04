@@ -1,0 +1,34 @@
+name = "robots-txt-ywca"
+main = "src/worker.ts"
+compatibility_date = "2024-01-01"
+
+# Worker configuration
+workers_dev = true
+
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+SITE_URL = "https://ywcaofmissoula.com"
+
+# Routes
+[[routes]]
+pattern = "ywcaofmissoula.com/robots.txt"
+zone_name = "ywcaofmissoula.com"
+
+# Development environment
+[env.development]
+name = "robots-txt-ywca-dev"
+vars = { ENVIRONMENT = "development", SITE_URL = "https://dev.ywcaofmissoula.com" }
+
+[[env.development.routes]]
+pattern = "dev.ywcaofmissoula.com/robots.txt"
+zone_name = "dev.ywcaofmissoula.com"
+
+# Staging environment
+[env.staging]
+name = "robots-txt-ywca-staging"
+vars = { ENVIRONMENT = "staging", SITE_URL = "https://staging.ywcaofmissoula.com" }
+
+[[env.staging.routes]]
+pattern = "staging.ywcaofmissoula.com/robots.txt"
+zone_name = "staging.ywcaofmissoula.com"
