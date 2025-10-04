@@ -1,13 +1,56 @@
 name = "sitemap-ywcaofmissoula-com"
-main = "src/worker.js"
-workers_dev = true
-preview_urls = true
-compatibility_date = "2025-10-03"
+main = "src/worker.ts"
+compatibility_date = "2024-12-18"
+compatibility_flags = ["nodejs_compat"]
 
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+CACHE_TTL = "3600"
+SITEMAP_CACHE = "true"
+ANALYTICS_ENABLED = "true"
+
+# KV namespace bindings
+[[kv_namespaces]]
+binding = "SITEMAP_CACHE_KV"
+id = "your-sitemap-kv-namespace-id"
+
+# Routes for sitemap.xml
 [[routes]]
-pattern = "*ywcaofmissoula.com/sitemap.xml"
+pattern = "ywcaofmissoula.com/sitemap.xml"
 zone_name = "ywcaofmissoula.com"
 
+[[routes]]
+pattern = "www.ywcaofmissoula.com/sitemap.xml"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "ywcaofmissoula.com/sitemap-index.xml"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "www.ywcaofmissoula.com/sitemap-index.xml"
+zone_name = "ywcaofmissoula.com"
+
+# Development environment
+[env.dev]
+vars = { ENVIRONMENT = "development", CACHE_TTL = "300", ANALYTICS_ENABLED = "false" }
+
+# Staging environment
+[env.staging]
+vars = { ENVIRONMENT = "staging", CACHE_TTL = "1800", ANALYTICS_ENABLED = "true" }
+
+# Production environment
+[env.production]
+vars = { ENVIRONMENT = "production", CACHE_TTL = "3600", ANALYTICS_ENABLED = "true" }
+
+# Observability and monitoring
 [observability]
 enabled = true
 head_sampling_rate = 1
+
+# Performance and limits
+[limits]
+cpu_ms = 50
+
+# TypeScript is handled automatically by Wrangler

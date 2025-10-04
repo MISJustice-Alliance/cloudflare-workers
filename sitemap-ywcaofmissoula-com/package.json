@@ -1,13 +1,50 @@
 {
-	"name": "reverse-proxy-ywca",
-	"version": "0.0.0",
+	"name": "sitemap-ywcaofmissoula-com",
+	"version": "2.0.0",
+	"description": "Advanced sitemap generator for YWCAOfMissoula.com - SEO and GEO optimized",
 	"private": true,
 	"scripts": {
 		"deploy": "wrangler deploy",
+		"deploy:dev": "wrangler deploy --env dev",
+		"deploy:staging": "wrangler deploy --env staging",
+		"deploy:production": "wrangler deploy --env production",
 		"dev": "wrangler dev",
-		"start": "wrangler dev"
+		"start": "wrangler dev",
+		"build": "tsc",
+		"type-check": "tsc --noEmit",
+		"test": "vitest",
+		"test:coverage": "vitest --coverage",
+		"lint": "eslint src/**/*.ts",
+		"lint:fix": "eslint src/**/*.ts --fix",
+		"format": "prettier --write src/**/*.ts",
+		"tail": "wrangler tail",
+		"kv:create": "wrangler kv:namespace create SITEMAP_CACHE",
+		"kv:list": "wrangler kv:namespace list"
 	},
+	"keywords": [
+		"cloudflare-workers",
+		"sitemap",
+		"seo",
+		"geo",
+		"legal-advocacy",
+		"civil-rights",
+		"evidence-repository",
+		"ai-optimization"
+	],
+	"author": "Anonymous Legal Assistance Group (MISJustice Alliance)",
+	"license": "MIT",
 	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20241218.0",
+		"@types/node": "^20.10.0",
+		"@typescript-eslint/eslint-plugin": "^6.13.0",
+		"@typescript-eslint/parser": "^6.13.0",
+		"eslint": "^8.54.0",
+		"prettier": "^3.1.0",
+		"typescript": "^5.3.0",
+		"vitest": "^1.0.0",
 		"wrangler": "^4.42.0"
+	},
+	"engines": {
+		"node": ">=18.0.0"
 	}
 }
