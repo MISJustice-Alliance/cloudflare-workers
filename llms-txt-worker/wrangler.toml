@@ -27,6 +27,10 @@ zone_name = "ywcaofmissoula.com"
 pattern = "ywcaofmissoula.com/llms-full.txt"
 zone_name = "ywcaofmissoula.com"
 
+[[routes]]
+pattern = "ywcaofmissoula.com/health"
+zone_name = "ywcaofmissoula.com"
+
 # Development environment
 [env.development]
 name = "llms-txt-worker-dev"
@@ -44,6 +48,10 @@ zone_name = "dev.ywcaofmissoula.com"
 pattern = "dev.ywcaofmissoula.com/llms-full.txt"
 zone_name = "dev.ywcaofmissoula.com"
 
+[[env.development.routes]]
+pattern = "dev.ywcaofmissoula.com/health"
+zone_name = "dev.ywcaofmissoula.com"
+
 # Staging environment
 [env.staging]
 name = "llms-txt-worker-staging"
@@ -59,4 +67,8 @@ zone_name = "staging.ywcaofmissoula.com"
 
 [[env.staging.routes]]
 pattern = "staging.ywcaofmissoula.com/llms-full.txt"
+zone_name = "staging.ywcaofmissoula.com"
+
+[[env.staging.routes]]
+pattern = "staging.ywcaofmissoula.com/health"
 zone_name = "staging.ywcaofmissoula.com"
