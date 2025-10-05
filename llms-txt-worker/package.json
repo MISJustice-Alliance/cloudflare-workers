@@ -11,6 +11,9 @@
     "deploy:production": "wrangler deploy --env production",
     "tail": "wrangler tail",
     "tail:production": "wrangler tail --env production",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "kv:create": "wrangler kv:namespace create LLMS_CONTENT",
     "kv:upload": "node scripts/upload-content.js"
   },
@@ -26,6 +29,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240512.0",
     "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
     "wrangler": "^3.0.0"
   }
 }

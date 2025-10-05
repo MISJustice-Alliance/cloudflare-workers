@@ -29,7 +29,8 @@ jobs:
         run: |
           cd reverse-proxy-ywca && npm ci
           cd ../sitemap-ywcaofmissoula-com && npm ci
-      
+          cd ../llms-txt-worker && npm ci
+
       - name: Run tests
         run: |
           if [ -d "reverse-proxy-ywca" ]; then
@@ -37,6 +38,9 @@ jobs:
           fi
           if [ -d "sitemap-ywcaofmissoula-com" ]; then
             cd sitemap-ywcaofmissoula-com && npm test || echo "No tests configured"
+          fi
+          if [ -d "llms-txt-worker" ]; then
+            cd llms-txt-worker && npm test || echo "No tests configured"
           fi
   
   deploy-development:
@@ -69,6 +73,14 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: 'sitemap-ywcaofmissoula-com'
           command: deploy --env development
+
+      - name: Deploy LLMS.txt Worker (Dev)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'llms-txt-worker'
+          command: deploy --env development
   
   deploy-staging:
     needs: test
@@ -99,6 +111,14 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: 'sitemap-ywcaofmissoula-com'
+          command: deploy --env staging
+
+      - name: Deploy LLMS.txt Worker (Staging)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'llms-txt-worker'
           command: deploy --env staging
   
   deploy-production:
@@ -134,9 +154,19 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: 'sitemap-ywcaofmissoula-com'
           command: deploy --env production
-      
+
+      - name: Deploy LLMS.txt Worker (Production)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: 'llms-txt-worker'
+          command: deploy --env production
+
       - name: Verify Deployment
         run: |
           echo "Verifying production deployment..."
           curl -f https://ywcaofmissoula.com/health || exit 1
           curl -f https://ywcaofmissoula.com/sitemap.xml || exit 1
+          curl -f https://ywcaofmissoula.com/llms.txt || exit 1
+          curl -f https://ywcaofmissoula.com/llms-full.txt || exit 1
