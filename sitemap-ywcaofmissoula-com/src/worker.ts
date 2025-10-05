@@ -74,35 +74,65 @@ interface SitemapConfig {
  * Legal advocacy content categories for SEO optimization
  */
 const CONTENT_CATEGORIES = {
+  HOMEPAGE: {
+    priority: '1.0',
+    changefreq: 'daily',
+    keywords: ['civil rights violations', 'ywca corruption', 'missoula police misconduct', 'legal advocacy', 'institutional accountability']
+  },
+  EXECUTIVE_SUMMARY: {
+    priority: '1.0',
+    changefreq: 'weekly',
+    keywords: ['executive summary', 'case overview', 'legal claims', 'civil rights documentation']
+  },
   CIVIL_RIGHTS: {
     priority: '0.9',
     changefreq: 'weekly',
-    keywords: ['civil rights violations', 'constitutional violations', 'legal advocacy']
-  },
-  EVIDENCE: {
-    priority: '0.8',
-    changefreq: 'monthly',
-    keywords: ['evidence repository', 'legal documents', 'court records']
+    keywords: ['civil rights violations', 'constitutional violations', 'legal advocacy', 'first amendment', 'fourth amendment', 'fourteenth amendment']
   },
   TIMELINE: {
     priority: '0.9',
+    changefreq: 'daily',
+    keywords: ['timeline', 'chronological evidence', 'case history', 'legal documentation', '2014-2025']
+  },
+  EVIDENCE: {
+    priority: '0.9',
     changefreq: 'weekly',
-    keywords: ['timeline', 'chronological evidence', 'case history']
+    keywords: ['evidence repository', 'legal documents', 'court records', 'documentation', 'proof']
+  },
+  CONSTITUTIONAL_ANALYSIS: {
+    priority: '0.8',
+    changefreq: 'monthly',
+    keywords: ['constitutional analysis', 'amendment violations', 'legal framework', 'rights violations']
   },
   COMPLAINTS: {
     priority: '0.7',
     changefreq: 'monthly',
-    keywords: ['legal complaints', 'bar complaints', 'department complaints']
+    keywords: ['legal complaints', 'bar complaints', 'doj filing', 'post complaint', 'federal complaint']
   },
   DOCUMENTS: {
     priority: '0.7',
     changefreq: 'monthly',
-    keywords: ['legal documents', 'court filings', 'correspondence']
+    keywords: ['legal documents', 'court filings', 'correspondence', 'police reports', 'evidence']
+  },
+  INSTITUTIONAL_CORRUPTION: {
+    priority: '0.8',
+    changefreq: 'monthly',
+    keywords: ['institutional corruption', 'ywca conflicts', 'prosecutorial misconduct', 'legal malpractice']
   },
   EDITORIAL: {
     priority: '0.6',
     changefreq: 'monthly',
-    keywords: ['editorial content', 'opinion', 'analysis']
+    keywords: ['editorial content', 'opinion', 'analysis', 'historical context']
+  },
+  RESOURCES: {
+    priority: '0.6',
+    changefreq: 'quarterly',
+    keywords: ['legal resources', 'media resources', 'press kit', 'advocacy tools']
+  },
+  SUPPORTING: {
+    priority: '0.5',
+    changefreq: 'quarterly',
+    keywords: ['about', 'community', 'impact', 'contact']
   }
 };
 
@@ -142,13 +172,51 @@ class SEOOptimizer {
    * Determine content category based on URL
    */
   static getContentCategory(url: string): keyof typeof CONTENT_CATEGORIES {
-    if (url.includes('Civil-Rights') || url.includes('Amendment')) return 'CIVIL_RIGHTS';
-    if (url.includes('Evidence') || url.includes('Documents')) return 'EVIDENCE';
-    if (url.includes('Timeline') || url.includes('Comprehensive')) return 'TIMELINE';
-    if (url.includes('Complaint') || url.includes('Bar') || url.includes('POST')) return 'COMPLAINTS';
-    if (url.includes('Police-Report') || url.includes('Court') || url.includes('Correspondence')) return 'DOCUMENTS';
-    if (url.includes('Remembering') || url.includes('Editorial')) return 'EDITORIAL';
-    return 'CIVIL_RIGHTS'; // Default to highest priority
+    const urlLower = url.toLowerCase();
+
+    // Homepage
+    if (urlLower.includes('02fa6619890448408af402796e5a1f63') || url.endsWith('/')) return 'HOMEPAGE';
+
+    // Executive Summary
+    if (urlLower.includes('who-should-read') || urlLower.includes('executive-summary')) return 'EXECUTIVE_SUMMARY';
+
+    // Timeline
+    if (urlLower.includes('timeline') || urlLower.includes('comprehensive-timeline')) return 'TIMELINE';
+
+    // Evidence Repository
+    if (urlLower.includes('evidence-related') && urlLower.includes('civil-rights')) return 'EVIDENCE';
+
+    // Civil Rights Overview
+    if (urlLower.includes('civil-rights-violations-and-related-claims')) return 'CIVIL_RIGHTS';
+
+    // Constitutional Analysis
+    if (urlLower.includes('amendment') && urlLower.includes('analysis')) return 'CONSTITUTIONAL_ANALYSIS';
+    if (urlLower.includes('first-amendment') || urlLower.includes('fourth-amendment') ||
+        urlLower.includes('fifth-amendment') || urlLower.includes('eighth-amendment') ||
+        urlLower.includes('fourteenth-amendment')) return 'CONSTITUTIONAL_ANALYSIS';
+
+    // Institutional Corruption
+    if (urlLower.includes('ywca-of-missoula-s-role')) return 'INSTITUTIONAL_CORRUPTION';
+
+    // Complaints
+    if (urlLower.includes('complaint') || urlLower.includes('bar') || urlLower.includes('post') ||
+        urlLower.includes('doj') || urlLower.includes('filing')) return 'COMPLAINTS';
+
+    // Documents
+    if (urlLower.includes('police-report') || urlLower.includes('court') ||
+        urlLower.includes('correspondence') || urlLower.includes('declaration')) return 'DOCUMENTS';
+
+    // Editorial
+    if (urlLower.includes('remembering') || urlLower.includes('editorial')) return 'EDITORIAL';
+
+    // Resources
+    if (urlLower.includes('resources') || urlLower.includes('media')) return 'RESOURCES';
+
+    // Supporting
+    if (urlLower.includes('about') || urlLower.includes('community') || urlLower.includes('contact')) return 'SUPPORTING';
+
+    // Default to civil rights
+    return 'CIVIL_RIGHTS';
   }
   
   /**
@@ -208,150 +276,191 @@ class SEOOptimizer {
 }
 
 /**
- * Generate comprehensive sitemap with SEO and GEO optimization
+ * All known page URLs for the legal advocacy platform
+ * Organized by content category for better SEO and maintenance
  */
-function generateAdvancedSitemap(config: SitemapConfig, userAgent: string): string {
-  const today = new Date().toISOString().split('T')[0];
-  
-  // Comprehensive URL structure for legal advocacy platform
-  const urls: SitemapUrl[] = [
-    // Main landing page - highest priority
+function getAllPageUrls(baseUrl: string, today: string): SitemapUrl[] {
+  return [
+    // ==========================================
+    // HOMEPAGE - Priority 1.0
+    // ==========================================
     {
-      loc: `${config.baseUrl}/02fa6619890448408af402796e5a1f63`,
+      loc: `${baseUrl}/02fa6619890448408af402796e5a1f63`,
       lastmod: today,
       priority: '1.0',
-      changefreq: 'daily',
-      images: [{
-        loc: `${config.baseUrl}/images/legal-advocacy-hero.jpg`,
-        title: 'Civil Rights Violations Documentation',
-        caption: 'Systematic civil rights violations and institutional corruption evidence repository'
-      }]
+      changefreq: 'daily'
     },
-    
-    // Core legal advocacy content
+
+    // ==========================================
+    // EXECUTIVE SUMMARY - Priority 1.0
+    // ==========================================
     {
-      loc: `${config.baseUrl}/Who-Should-Read-This-Why-245ca07db849803fa367fc6b9f953726`,
+      loc: `${baseUrl}/Who-Should-Read-This-Why-245ca07db849803fa367fc6b9f953726`,
+      lastmod: today,
+      priority: '1.0',
+      changefreq: 'weekly'
+    },
+
+    // ==========================================
+    // TIMELINE - Priority 0.9
+    // ==========================================
+    {
+      loc: `${baseUrl}/Comprehensive-Timeline-and-Actionable-Claims-in-the-Case-of-Mr-Nuno-2014-2025-22eca07db84980dd8f90e61f5cda2936`,
+      lastmod: today,
+      priority: '0.9',
+      changefreq: 'daily'
+    },
+
+    // ==========================================
+    // EVIDENCE REPOSITORY - Priority 0.9
+    // ==========================================
+    {
+      loc: `${baseUrl}/Evidence-Related-to-Civil-Rights-Violations-of-Mr-Nuno-2015-2025-204ca07db84980df8ca4fb3637134091`,
       lastmod: today,
       priority: '0.9',
       changefreq: 'weekly'
     },
+
+    // ==========================================
+    // CIVIL RIGHTS OVERVIEW - Priority 0.9
+    // ==========================================
     {
-      loc: `${config.baseUrl}/Comprehensive-Timeline-and-Actionable-Claims-in-the-Case-of-Mr-Nuno-2014-2025-22eca07db84980dd8f90e61f5cda2936`,
+      loc: `${baseUrl}/Civil-Rights-Violations-and-Related-Claims-2015-2025-22dca07db8498090b82eddb661890956`,
       lastmod: today,
       priority: '0.9',
       changefreq: 'weekly'
     },
+
+    // ==========================================
+    // CONSTITUTIONAL ANALYSIS - Priority 0.8
+    // ==========================================
+
+    // First Amendment Violations
     {
-      loc: `${config.baseUrl}/Civil-Rights-Violations-and-Related-Claims-2015-2025-22dca07db8498090b82eddb661890956`,
+      loc: `${baseUrl}/Full-Analysis-of-First-Amendment-Violations-2017-2025-226ca07db84980f78c47eef363025a94`,
       lastmod: today,
-      priority: '0.9',
-      changefreq: 'weekly'
+      priority: '0.8',
+      changefreq: 'monthly'
     },
+
+    // Fourth Amendment Violations
     {
-      loc: `${config.baseUrl}/Evidence-Related-to-Civil-Rights-Violations-of-Mr-Nuno-2015-2025-204ca07db84980df8ca4fb3637134091`,
-      lastmod: today,
-      priority: '0.9',
-      changefreq: 'weekly'
-    },
-    
-    // Constitutional violations analysis
-    {
-      loc: `${config.baseUrl}/YWCA-of-Missoula-s-Role-in-First-Amendment-Violations-Against-Mr-Nuno-2018-2025-229ca07db84980b89cd0db29a85e3b0b`,
+      loc: `${baseUrl}/Fourth-Amendment-Violations-in-2016OPA-1167-Police-Report-Falsification-and-Unconstitutional-Custod-228ca07db849802884f6c5f7bffd1840`,
       lastmod: today,
       priority: '0.8',
       changefreq: 'monthly'
     },
     {
-      loc: `${config.baseUrl}/Full-Analysis-of-First-Amendment-Violations-2017-2025-226ca07db84980f78c47eef363025a94`,
+      loc: `${baseUrl}/Full-Analysis-of-Fourth-Amendment-Violations-Against-Mr-Nuno-2015-2025-226ca07db84980d5b570e9cc94366540`,
       lastmod: today,
       priority: '0.8',
       changefreq: 'monthly'
     },
+
+    // Fifth Amendment Violations
     {
-      loc: `${config.baseUrl}/Fourth-Amendment-Violations-in-2016OPA-1167-Police-Report-Falsification-and-Unconstitutional-Custod-228ca07db849802884f6c5f7bffd1840`,
+      loc: `${baseUrl}/Full-Analysis-of-Fifth-Amendment-Due-Process-Violations-2015-2025-228ca07db84980c08ac8e4ee2b4f59cb`,
       lastmod: today,
       priority: '0.8',
       changefreq: 'monthly'
     },
+
+    // Eighth Amendment Violations
     {
-      loc: `${config.baseUrl}/Full-Analysis-of-Fourth-Amendment-Violations-Against-Mr-Nuno-2015-2025-226ca07db84980d5b570e9cc94366540`,
+      loc: `${baseUrl}/Full-Analysis-of-Eighth-Amendment-Violations-and-Systematic-Prosecutorial-Abuse-2015-2025-228ca07db84980c9b2b2e6462c6d755f`,
       lastmod: today,
       priority: '0.8',
       changefreq: 'monthly'
     },
+
+    // Fourteenth Amendment Violations
     {
-      loc: `${config.baseUrl}/Full-Analysis-of-Fifth-Amendment-Due-Process-Violations-2015-2025-228ca07db84980c08ac8e4ee2b4f59cb`,
+      loc: `${baseUrl}/Full-Analysis-of-Fourteenth-Amendment-Equal-Protection-and-Due-Process-Violations-2015-2025-228ca07db84980398376efc89b7b92a5`,
       lastmod: today,
       priority: '0.8',
       changefreq: 'monthly'
     },
+
+    // ==========================================
+    // INSTITUTIONAL CORRUPTION - Priority 0.8
+    // ==========================================
     {
-      loc: `${config.baseUrl}/Full-Analysis-of-Eighth-Amendment-Violations-and-Systematic-Prosecutorial-Abuse-2015-2025-228ca07db84980c9b2b2e6462c6d755f`,
+      loc: `${baseUrl}/YWCA-of-Missoula-s-Role-in-First-Amendment-Violations-Against-Mr-Nuno-2018-2025-229ca07db84980b89cd0db29a85e3b0b`,
       lastmod: today,
       priority: '0.8',
       changefreq: 'monthly'
     },
+
+    // ==========================================
+    // LEGAL COMPLAINTS - Priority 0.7
+    // ==========================================
     {
-      loc: `${config.baseUrl}/Full-Analysis-of-Fourteenth-Amendment-Equal-Protection-and-Due-Process-Violations-2015-2025-228ca07db84980398376efc89b7b92a5`,
-      lastmod: today,
-      priority: '0.8',
-      changefreq: 'monthly'
-    },
-    
-    // Legal complaints and filings
-    {
-      loc: `${config.baseUrl}/Federal-DoJ-Civil-Rights-Division-Filing-658793-SKB-August-2025-260ca07db84980ff8692efafa09cbee3`,
+      loc: `${baseUrl}/Federal-DoJ-Civil-Rights-Division-Filing-658793-SKB-August-2025-260ca07db84980ff8692efafa09cbee3`,
       lastmod: today,
       priority: '0.7',
       changefreq: 'monthly'
     },
     {
-      loc: `${config.baseUrl}/MT-Bar-Complaint-ODC-No-25-147-Bryan-Tipp-of-Tipp-Colburn-Lockwood-P-C-July-2025-222ca07db8498094b8bcf91fb3466cf1`,
+      loc: `${baseUrl}/MT-Bar-Complaint-ODC-No-25-147-Bryan-Tipp-of-Tipp-Colburn-Lockwood-P-C-July-2025-222ca07db8498094b8bcf91fb3466cf1`,
       lastmod: today,
       priority: '0.7',
       changefreq: 'monthly'
     },
     {
-      loc: `${config.baseUrl}/MT-DoJ-Public-Safety-Officer-Standards-Training-Council-POST-Complaint-August-2025-24dca07db849806f8f87eab279e35538`,
+      loc: `${baseUrl}/MT-DoJ-Public-Safety-Officer-Standards-Training-Council-POST-Complaint-August-2025-24dca07db849806f8f87eab279e35538`,
       lastmod: today,
       priority: '0.7',
       changefreq: 'monthly'
     },
-    
-    // Evidence documents
+
+    // ==========================================
+    // EVIDENCE DOCUMENTS - Priority 0.7
+    // ==========================================
     {
-      loc: `${config.baseUrl}/Seattle-Police-Report-Written-statement-regarding-incident-2016-348587-2016-228ca07db84980388c01fb27ad0994e1`,
-      lastmod: today,
-      priority: '0.7',
-      changefreq: 'monthly'
-    },
-    {
-      loc: `${config.baseUrl}/Edmonds-Court-Declaration-of-Ineffective-Assistance-2016-228ca07db84980608e5fea94ddcc64a0`,
-      lastmod: today,
-      priority: '0.7',
-      changefreq: 'monthly'
-    },
-    {
-      loc: `${config.baseUrl}/MT-DoJ-POST-Correspondence-E-Mail-Chain-August-2025-265ca07db849807baf80eba3f953d2db`,
+      loc: `${baseUrl}/Seattle-Police-Report-Written-statement-regarding-incident-2016-348587-2016-228ca07db84980388c01fb27ad0994e1`,
       lastmod: today,
       priority: '0.7',
       changefreq: 'monthly'
     },
     {
-      loc: `${config.baseUrl}/MT-ACLU-Correspondence-August-2025-25dca07db84980d0ac9ac5924ab05900`,
+      loc: `${baseUrl}/Edmonds-Court-Declaration-of-Ineffective-Assistance-2016-228ca07db84980608e5fea94ddcc64a0`,
       lastmod: today,
       priority: '0.7',
       changefreq: 'monthly'
     },
-    
-    // Editorial content
     {
-      loc: `${config.baseUrl}/Remembering-When-MPD-County-Prosecutors-and-the-YWCA-Allowed-Missoula-to-Become-the-Sexual-Assau-25aca07db84980d680bcfc7002902b1d`,
+      loc: `${baseUrl}/MT-DoJ-POST-Correspondence-E-Mail-Chain-August-2025-265ca07db849807baf80eba3f953d2db`,
+      lastmod: today,
+      priority: '0.7',
+      changefreq: 'monthly'
+    },
+    {
+      loc: `${baseUrl}/MT-ACLU-Correspondence-August-2025-25dca07db84980d0ac9ac5924ab05900`,
+      lastmod: today,
+      priority: '0.7',
+      changefreq: 'monthly'
+    },
+
+    // ==========================================
+    // EDITORIAL CONTENT - Priority 0.6
+    // ==========================================
+    {
+      loc: `${baseUrl}/Remembering-When-MPD-County-Prosecutors-and-the-YWCA-Allowed-Missoula-to-Become-the-Sexual-Assau-25aca07db84980d680bcfc7002902b1d`,
       lastmod: today,
       priority: '0.6',
       changefreq: 'monthly'
     }
   ];
+}
+
+/**
+ * Generate comprehensive sitemap with SEO and GEO optimization
+ */
+function generateAdvancedSitemap(config: SitemapConfig, userAgent: string): string {
+  const today = new Date().toISOString().split('T')[0];
+
+  // Get all page URLs
+  const urls: SitemapUrl[] = getAllPageUrls(config.baseUrl, today);
 
   // Generate XML sitemap with enhanced features
   const urlEntries = urls.map(url => {
@@ -419,19 +528,73 @@ ${urlEntries}
 }
 
 /**
- * Generate sitemap index for large sites
+ * Filter URLs by category
+ */
+function filterUrlsByCategory(urls: SitemapUrl[], categories: string[]): SitemapUrl[] {
+  return urls.filter(url => {
+    const category = SEOOptimizer.getContentCategory(url.loc);
+    return categories.includes(category);
+  });
+}
+
+/**
+ * Generate category-specific sitemap
+ */
+function generateCategorySitemap(config: SitemapConfig, categories: string[]): string {
+  const today = new Date().toISOString().split('T')[0];
+  const allUrls = getAllPageUrls(config.baseUrl, today);
+  const filteredUrls = filterUrlsByCategory(allUrls, categories);
+
+  const urlEntries = filteredUrls.map(url => {
+    return `  <url>
+    <loc>${escapeXml(url.loc)}</loc>
+    <lastmod>${url.lastmod}</lastmod>
+    <priority>${url.priority}</priority>
+    <changefreq>${url.changefreq || config.defaultChangefreq}</changefreq>
+  </url>`;
+  }).join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlEntries}
+</urlset>`;
+}
+
+/**
+ * Generate sitemap index for organized site structure
  */
 function generateSitemapIndex(config: SitemapConfig): string {
   const today = new Date().toISOString().split('T')[0];
-  
+
   const sitemaps = [
-    { loc: `${config.baseUrl}/sitemap.xml`, lastmod: today },
-    { loc: `${config.baseUrl}/sitemap-pages.xml`, lastmod: today },
-    { loc: `${config.baseUrl}/sitemap-documents.xml`, lastmod: today },
-    { loc: `${config.baseUrl}/sitemap-timeline.xml`, lastmod: today }
+    {
+      loc: `${config.baseUrl}/sitemap.xml`,
+      lastmod: today,
+      description: 'Main comprehensive sitemap'
+    },
+    {
+      loc: `${config.baseUrl}/sitemap-pages.xml`,
+      lastmod: today,
+      description: 'Core pages and navigation'
+    },
+    {
+      loc: `${config.baseUrl}/sitemap-constitutional.xml`,
+      lastmod: today,
+      description: 'Constitutional analysis pages'
+    },
+    {
+      loc: `${config.baseUrl}/sitemap-documents.xml`,
+      lastmod: today,
+      description: 'Evidence and legal documents'
+    },
+    {
+      loc: `${config.baseUrl}/sitemap-complaints.xml`,
+      lastmod: today,
+      description: 'Legal complaints and filings'
+    }
   ];
 
-  const sitemapEntries = sitemaps.map(sitemap => 
+  const sitemapEntries = sitemaps.map(sitemap =>
     `  <sitemap>
     <loc>${escapeXml(sitemap.loc)}</loc>
     <lastmod>${sitemap.lastmod}</lastmod>
@@ -481,32 +644,65 @@ function escapeXml(unsafe: string): string {
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const startTime = Date.now();
-    
+
     try {
       const url = new URL(request.url);
       const userAgent = request.headers.get('user-agent') || 'Unknown';
-      
-      // Handle different sitemap requests
-      if (url.pathname === '/sitemap.xml' || url.pathname === '/sitemap') {
+      const pathname = url.pathname;
+
+      // Route to appropriate sitemap handler
+      if (pathname === '/sitemap.xml' || pathname === '/sitemap') {
         return await handleSitemapRequest(request, env, ctx, userAgent, startTime);
       }
-      
-      if (url.pathname === '/sitemap-index.xml') {
+
+      if (pathname === '/sitemap-index.xml') {
         return await handleSitemapIndexRequest(request, env, ctx, userAgent, startTime);
       }
-      
+
+      if (pathname === '/sitemap-pages.xml') {
+        return await handleCategorySitemapRequest(
+          request, env, ctx, userAgent, startTime,
+          ['HOMEPAGE', 'EXECUTIVE_SUMMARY', 'TIMELINE', 'EVIDENCE', 'CIVIL_RIGHTS'],
+          'pages'
+        );
+      }
+
+      if (pathname === '/sitemap-constitutional.xml') {
+        return await handleCategorySitemapRequest(
+          request, env, ctx, userAgent, startTime,
+          ['CONSTITUTIONAL_ANALYSIS'],
+          'constitutional'
+        );
+      }
+
+      if (pathname === '/sitemap-documents.xml') {
+        return await handleCategorySitemapRequest(
+          request, env, ctx, userAgent, startTime,
+          ['DOCUMENTS', 'EVIDENCE', 'INSTITUTIONAL_CORRUPTION'],
+          'documents'
+        );
+      }
+
+      if (pathname === '/sitemap-complaints.xml') {
+        return await handleCategorySitemapRequest(
+          request, env, ctx, userAgent, startTime,
+          ['COMPLAINTS'],
+          'complaints'
+        );
+      }
+
       // For all other requests, return 404
-      return new Response('Not Found', { 
+      return new Response('Not Found', {
         status: 404,
         headers: {
           'Content-Type': 'text/plain',
           'X-Error': 'Sitemap not found'
         }
       });
-      
+
     } catch (error) {
       console.error('Sitemap worker error:', error);
-      
+
       // Return fallback sitemap
       const fallbackSitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -516,7 +712,7 @@ export default {
     <priority>1.0</priority>
   </url>
 </urlset>`;
-      
+
       return new Response(fallbackSitemap, {
         status: 200,
         headers: {
@@ -533,26 +729,48 @@ export default {
  * Handle main sitemap request
  */
 async function handleSitemapRequest(
-  request: Request, 
-  env: Env, 
-  ctx: ExecutionContext, 
-  userAgent: string, 
+  request: Request,
+  env: Env,
+  ctx: ExecutionContext,
+  userAgent: string,
   startTime: number
 ): Promise<Response> {
-  // Initialize cache
-  const cache = new SitemapCache(
-    env.SITEMAP_CACHE_KV!,
-    parseInt(env.CACHE_TTL || '3600')
-  );
-  
-  // Generate cache key
-  const cacheKey = cache.generateCacheKey('main', userAgent);
-  
-  // Try to get from cache first
-  let sitemapContent = await cache.get(cacheKey);
-  
-  if (!sitemapContent) {
-    // Generate new sitemap
+  let sitemapContent: string;
+  let cacheHit = false;
+
+  // Try cache if KV is available
+  if (env.SITEMAP_CACHE_KV && env.SITEMAP_CACHE === 'true') {
+    const cache = new SitemapCache(
+      env.SITEMAP_CACHE_KV,
+      parseInt(env.CACHE_TTL || '3600')
+    );
+
+    const cacheKey = cache.generateCacheKey('main', userAgent);
+    const cached = await cache.get(cacheKey);
+
+    if (cached) {
+      sitemapContent = cached;
+      cacheHit = true;
+    } else {
+      // Generate new sitemap
+      const config: SitemapConfig = {
+        baseUrl: 'https://ywcaofmissoula.com',
+        defaultPriority: '0.5',
+        defaultChangefreq: 'monthly',
+        maxUrls: 1000,
+        enableImages: true,
+        enableVideos: false,
+        enableNews: false,
+        enableStructuredData: true
+      };
+
+      sitemapContent = generateAdvancedSitemap(config, userAgent);
+
+      // Cache the result
+      await cache.set(cacheKey, sitemapContent);
+    }
+  } else {
+    // No cache available, generate directly
     const config: SitemapConfig = {
       baseUrl: 'https://ywcaofmissoula.com',
       defaultPriority: '0.5',
@@ -563,22 +781,19 @@ async function handleSitemapRequest(
       enableNews: false,
       enableStructuredData: true
     };
-    
+
     sitemapContent = generateAdvancedSitemap(config, userAgent);
-    
-    // Cache the result
-    await cache.set(cacheKey, sitemapContent);
   }
   
   // Calculate processing time
   const processingTime = Date.now() - startTime;
-  
+
   // Add performance headers
   const responseHeaders = {
     ...SECURITY_HEADERS,
     'X-Processing-Time': `${processingTime}ms`,
-    'X-Cache-Status': sitemapContent ? 'HIT' : 'MISS',
-    'X-Sitemap-URLs': '50', // Approximate count
+    'X-Cache-Status': cacheHit ? 'HIT' : 'MISS',
+    'X-Sitemap-URLs': '19',
     'X-SEO-Optimized': 'true',
     'X-GEO-Optimized': 'true'
   };
@@ -590,7 +805,7 @@ async function handleSitemapRequest(
         userAgent,
         requestType: 'sitemap',
         processingTime,
-        cacheHit: !!sitemapContent
+        cacheHit
       })
     );
   }
@@ -605,10 +820,10 @@ async function handleSitemapRequest(
  * Handle sitemap index request
  */
 async function handleSitemapIndexRequest(
-  request: Request, 
-  env: Env, 
-  ctx: ExecutionContext, 
-  userAgent: string, 
+  request: Request,
+  env: Env,
+  ctx: ExecutionContext,
+  userAgent: string,
   startTime: number
 ): Promise<Response> {
   const config: SitemapConfig = {
@@ -621,16 +836,74 @@ async function handleSitemapIndexRequest(
     enableNews: false,
     enableStructuredData: true
   };
-  
+
   const sitemapIndex = generateSitemapIndex(config);
   const processingTime = Date.now() - startTime;
-  
+
   return new Response(sitemapIndex, {
     status: 200,
     headers: {
       ...SECURITY_HEADERS,
       'X-Processing-Time': `${processingTime}ms`,
       'X-Sitemap-Type': 'Index'
+    }
+  });
+}
+
+/**
+ * Handle category-specific sitemap request
+ */
+async function handleCategorySitemapRequest(
+  request: Request,
+  env: Env,
+  ctx: ExecutionContext,
+  userAgent: string,
+  startTime: number,
+  categories: string[],
+  sitemapType: string
+): Promise<Response> {
+  const config: SitemapConfig = {
+    baseUrl: 'https://ywcaofmissoula.com',
+    defaultPriority: '0.5',
+    defaultChangefreq: 'monthly',
+    maxUrls: 1000,
+    enableImages: true,
+    enableVideos: false,
+    enableNews: false,
+    enableStructuredData: true
+  };
+
+  // Try cache first if available
+  let sitemapContent: string;
+
+  if (env.SITEMAP_CACHE_KV) {
+    const cache = new SitemapCache(
+      env.SITEMAP_CACHE_KV,
+      parseInt(env.CACHE_TTL || '3600')
+    );
+
+    const cacheKey = cache.generateCacheKey(sitemapType, userAgent);
+    const cached = await cache.get(cacheKey);
+
+    if (cached) {
+      sitemapContent = cached;
+    } else {
+      sitemapContent = generateCategorySitemap(config, categories);
+      await cache.set(cacheKey, sitemapContent);
+    }
+  } else {
+    sitemapContent = generateCategorySitemap(config, categories);
+  }
+
+  const processingTime = Date.now() - startTime;
+
+  return new Response(sitemapContent, {
+    status: 200,
+    headers: {
+      ...SECURITY_HEADERS,
+      'X-Processing-Time': `${processingTime}ms`,
+      'X-Sitemap-Type': sitemapType,
+      'X-Categories': categories.join(', ')
     }
   });
 }

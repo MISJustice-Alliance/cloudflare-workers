@@ -3,19 +3,21 @@ main = "src/worker.ts"
 compatibility_date = "2024-12-18"
 compatibility_flags = ["nodejs_compat"]
 
-# Environment variables
+# Default environment variables (top-level - inherited by all envs)
 [vars]
 ENVIRONMENT = "production"
 CACHE_TTL = "3600"
-SITEMAP_CACHE = "true"
+SITEMAP_CACHE = "false"
 ANALYTICS_ENABLED = "true"
 
-# KV namespace bindings
-[[kv_namespaces]]
-binding = "SITEMAP_CACHE_KV"
-id = "your-sitemap-kv-namespace-id"
+# KV namespace bindings (optional - uncomment and add ID when ready)
+# To create: wrangler kv:namespace create "SITEMAP_CACHE"
+# [[kv_namespaces]]
+# binding = "SITEMAP_CACHE_KV"
+# id = "your-sitemap-kv-namespace-id-here"
 
-# Routes for sitemap.xml
+# Routes for all sitemap endpoints
+# Main sitemap
 [[routes]]
 pattern = "ywcaofmissoula.com/sitemap.xml"
 zone_name = "ywcaofmissoula.com"
@@ -24,6 +26,7 @@ zone_name = "ywcaofmissoula.com"
 pattern = "www.ywcaofmissoula.com/sitemap.xml"
 zone_name = "ywcaofmissoula.com"
 
+# Sitemap index
 [[routes]]
 pattern = "ywcaofmissoula.com/sitemap-index.xml"
 zone_name = "ywcaofmissoula.com"
@@ -32,17 +35,50 @@ zone_name = "ywcaofmissoula.com"
 pattern = "www.ywcaofmissoula.com/sitemap-index.xml"
 zone_name = "ywcaofmissoula.com"
 
+# Category-specific sitemaps
+[[routes]]
+pattern = "ywcaofmissoula.com/sitemap-pages.xml"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "www.ywcaofmissoula.com/sitemap-pages.xml"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "ywcaofmissoula.com/sitemap-constitutional.xml"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "www.ywcaofmissoula.com/sitemap-constitutional.xml"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "ywcaofmissoula.com/sitemap-documents.xml"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "www.ywcaofmissoula.com/sitemap-documents.xml"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "ywcaofmissoula.com/sitemap-complaints.xml"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "www.ywcaofmissoula.com/sitemap-complaints.xml"
+zone_name = "ywcaofmissoula.com"
+
 # Development environment
 [env.dev]
-vars = { ENVIRONMENT = "development", CACHE_TTL = "300", ANALYTICS_ENABLED = "false" }
+vars = { ENVIRONMENT = "development", CACHE_TTL = "300", SITEMAP_CACHE = "false", ANALYTICS_ENABLED = "false" }
 
 # Staging environment
 [env.staging]
-vars = { ENVIRONMENT = "staging", CACHE_TTL = "1800", ANALYTICS_ENABLED = "true" }
+vars = { ENVIRONMENT = "staging", CACHE_TTL = "1800", SITEMAP_CACHE = "false", ANALYTICS_ENABLED = "true" }
 
 # Production environment
 [env.production]
-vars = { ENVIRONMENT = "production", CACHE_TTL = "3600", ANALYTICS_ENABLED = "true" }
+vars = { ENVIRONMENT = "production", CACHE_TTL = "3600", SITEMAP_CACHE = "false", ANALYTICS_ENABLED = "true" }
 
 # Observability and monitoring
 [observability]

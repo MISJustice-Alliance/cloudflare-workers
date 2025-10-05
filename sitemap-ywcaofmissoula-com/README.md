@@ -1,6 +1,9 @@
 # Advanced Sitemap Generator for YWCAOfMissoula.com
 
-A sophisticated Cloudflare Worker that generates comprehensive sitemaps optimized for both traditional SEO and GEO (Generative Engine Optimization) for the YWCAOfMissoula.com legal advocacy platform.
+> **Comprehensive SEO & GEO-Optimized Sitemap Generator**
+> Dynamically generates XML sitemaps for legal advocacy platform with 19 verified pages
+
+A sophisticated Cloudflare Worker that generates comprehensive sitemaps optimized for both traditional SEO and GEO (Generative Engine Optimization) for the YWCAOfMissoula.com legal advocacy platform documenting civil rights violations in Missoula, Montana (2014-2025).
 
 ## Overview
 
@@ -93,25 +96,18 @@ This worker serves as the backbone for search engine optimization and AI crawler
 | `SITEMAP_CACHE` | `true` | Enable sitemap caching |
 | `ANALYTICS_ENABLED` | `true` | Enable analytics logging |
 
-### Sitemap Types
+### Sitemap Endpoints
 
-The worker generates multiple types of sitemaps:
+The worker generates multiple sitemaps organized by content category:
 
-#### Main Sitemap (`/sitemap.xml`)
-- **Primary sitemap** with all URLs
-- **SEO optimized** with proper priorities
-- **GEO enhanced** for AI crawlers
-- **Structured data** for legal documents
-
-#### Sitemap Index (`/sitemap-index.xml`)
-- **Sitemap index** for large sites
-- **Multiple sitemap references**
-- **Organized by content type**
-
-#### Specialized Sitemaps
-- **Pages sitemap**: Main content pages
-- **Documents sitemap**: Legal documents and evidence
-- **Timeline sitemap**: Chronological content
+| Endpoint | Description | Content | URLs |
+|----------|-------------|---------|------|
+| `/sitemap.xml` | Main comprehensive sitemap | All pages | 19 |
+| `/sitemap-index.xml` | Sitemap index | References to category sitemaps | 5 |
+| `/sitemap-pages.xml` | Core navigation pages | Homepage, summary, timeline, evidence | 5 |
+| `/sitemap-constitutional.xml` | Constitutional analysis | 1st, 4th, 5th, 8th, 14th amendment violations | 6 |
+| `/sitemap-documents.xml` | Evidence documents | Police reports, court filings, correspondence | 4 |
+| `/sitemap-complaints.xml` | Legal complaints | DOJ, Bar, POST complaints | 3 |
 
 ## Usage
 
@@ -195,32 +191,22 @@ npm run tail
 
 ### Content Categories
 
-The sitemap organizes content by legal importance:
+The sitemap organizes all 19 verified pages by legal importance:
 
-#### Civil Rights (Priority: 0.9)
-- Constitutional violations analysis
-- Civil rights documentation
-- Legal advocacy content
+| Category | Priority | Change Freq | Description | Count |
+|----------|----------|-------------|-------------|-------|
+| `HOMEPAGE` | 1.0 | daily | Main landing page | 1 |
+| `EXECUTIVE_SUMMARY` | 1.0 | weekly | Who should read this, why | 1 |
+| `TIMELINE` | 0.9 | daily | Comprehensive timeline 2014-2025 | 1 |
+| `EVIDENCE` | 0.9 | weekly | Evidence repository | 1 |
+| `CIVIL_RIGHTS` | 0.9 | weekly | Civil rights violations overview | 1 |
+| `CONSTITUTIONAL_ANALYSIS` | 0.8 | monthly | Amendment violations (1st, 4th, 5th, 8th, 14th) | 6 |
+| `INSTITUTIONAL_CORRUPTION` | 0.8 | monthly | YWCA conflicts and corruption | 1 |
+| `COMPLAINTS` | 0.7 | monthly | DOJ, Bar, POST complaints | 3 |
+| `DOCUMENTS` | 0.7 | monthly | Police reports, court filings | 4 |
+| `EDITORIAL` | 0.6 | monthly | Historical analysis and opinion | 1 |
 
-#### Evidence (Priority: 0.8)
-- Legal documents
-- Court filings
-- Correspondence
-
-#### Complaints (Priority: 0.7)
-- Bar complaints
-- Department complaints
-- Legal filings
-
-#### Documents (Priority: 0.7)
-- Police reports
-- Court documents
-- Evidence files
-
-#### Editorial (Priority: 0.6)
-- Opinion pieces
-- Analysis articles
-- Commentary
+**Total Pages**: 19 verified URLs from ywcaofmissoula.com
 
 ### GEO Features
 
