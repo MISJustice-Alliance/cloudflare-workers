@@ -2,7 +2,7 @@ name = "reverse-proxy-ywca"
 main = "src/worker.js"
 workers_dev = false
 compatibility_date = "2025-10-03"
-account_id = "7b2f784c5831c5cb430bad3d4eb6d0a3"
+account_id = "e6537b26b3f9444de8e670aa4442fd6e"
 
 [observability]
 enabled = true
