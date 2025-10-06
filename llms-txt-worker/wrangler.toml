@@ -72,3 +72,8 @@ zone_name = "staging.ywcaofmissoula.com"
 [[env.staging.routes]]
 pattern = "staging.ywcaofmissoula.com/health"
 zone_name = "staging.ywcaofmissoula.com"
+
+# Production environment
+[env.production]
+name = "llms-txt-worker-production"
+vars = { ENVIRONMENT = "production", CACHE_TTL = "86400", RATE_LIMIT_REQUESTS = "100", RATE_LIMIT_WINDOW = "60", ANALYTICS_ENABLED = "true" }

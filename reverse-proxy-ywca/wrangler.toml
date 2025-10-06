@@ -1,7 +1,6 @@
 name = "reverse-proxy-ywca"
 main = "src/worker.js"
 workers_dev = true
-preview_urls = true
 compatibility_date = "2025-10-03"
 
 [[routes]]
@@ -11,3 +10,18 @@ zone_name = "ywcaofmissoula.com"
 [observability]
 enabled = true
 head_sampling_rate = 1
+
+# Development environment
+[env.development]
+name = "reverse-proxy-ywca-dev"
+vars = { ENVIRONMENT = "development" }
+
+# Staging environment
+[env.staging]
+name = "reverse-proxy-ywca-staging"
+vars = { ENVIRONMENT = "staging" }
+
+# Production environment
+[env.production]
+name = "reverse-proxy-ywca-production"
+vars = { ENVIRONMENT = "production" }
