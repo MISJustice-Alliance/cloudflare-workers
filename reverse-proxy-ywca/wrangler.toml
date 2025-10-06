@@ -8,21 +8,19 @@ account_id = "e6537b26b3f9444de8e670aa4442fd6e"
 enabled = true
 head_sampling_rate = 1
 
+# Routes - shared across all environments
+[[routes]]
+pattern = "ywcaofmissoula.com/*"
+zone_name = "ywcaofmissoula.com"
+
 # Development environment
 [env.development]
-name = "reverse-proxy-ywca-dev"
 vars = { ENVIRONMENT = "development" }
 
 # Staging environment
 [env.staging]
-name = "reverse-proxy-ywca-staging"
 vars = { ENVIRONMENT = "staging" }
 
 # Production environment
 [env.production]
-name = "reverse-proxy-ywca-production"
 vars = { ENVIRONMENT = "production" }
-
-[[env.production.routes]]
-pattern = "ywcaofmissoula.com/*"
-zone_name = "ywcaofmissoula.com"
