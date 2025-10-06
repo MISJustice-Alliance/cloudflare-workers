@@ -1,6 +1,7 @@
 name = "llm-txt-redirect"
 main = "src/worker.ts"
 compatibility_date = "2024-01-01"
+account_id = "7b2f784c5831c5cb430bad3d4eb6d0a3"
 
 # Worker configuration
 workers_dev = true
