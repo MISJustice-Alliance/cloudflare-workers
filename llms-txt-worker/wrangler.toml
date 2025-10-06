@@ -1,10 +1,10 @@
-name = "llm-txt-redirect"
+name = "llms-txt-worker"
 main = "src/worker.ts"
 compatibility_date = "2024-01-01"
 account_id = "e6537b26b3f9444de8e670aa4442fd6e"
 
 # Worker configuration
-workers_dev = true
+workers_dev = false
 
 # Environment variables
 [vars]
@@ -34,47 +34,29 @@ zone_name = "ywcaofmissoula.com"
 
 # Development environment
 [env.development]
-name = "llms-txt-worker-dev"
 vars = { ENVIRONMENT = "development", CACHE_TTL = "3600", RATE_LIMIT_REQUESTS = "200", RATE_LIMIT_WINDOW = "60", ANALYTICS_ENABLED = "false" }
 
 # [[env.development.kv_namespaces]]
 # binding = "LLMS_CONTENT"
 # id = "development-llms-content-id"
 
-[[env.development.routes]]
-pattern = "dev.ywcaofmissoula.com/llms.txt"
-zone_name = "dev.ywcaofmissoula.com"
-
-[[env.development.routes]]
-pattern = "dev.ywcaofmissoula.com/llms-full.txt"
-zone_name = "dev.ywcaofmissoula.com"
-
-[[env.development.routes]]
-pattern = "dev.ywcaofmissoula.com/health"
-zone_name = "dev.ywcaofmissoula.com"
-
 # Staging environment
 [env.staging]
-name = "llms-txt-worker-staging"
 vars = { ENVIRONMENT = "staging", CACHE_TTL = "43200", RATE_LIMIT_REQUESTS = "150", RATE_LIMIT_WINDOW = "60", ANALYTICS_ENABLED = "true" }
 
 # [[env.staging.kv_namespaces]]
 # binding = "LLMS_CONTENT"
 # id = "staging-llms-content-id"
 
-[[env.staging.routes]]
-pattern = "staging.ywcaofmissoula.com/llms.txt"
-zone_name = "staging.ywcaofmissoula.com"
-
-[[env.staging.routes]]
-pattern = "staging.ywcaofmissoula.com/llms-full.txt"
-zone_name = "staging.ywcaofmissoula.com"
-
-[[env.staging.routes]]
-pattern = "staging.ywcaofmissoula.com/health"
-zone_name = "staging.ywcaofmissoula.com"
-
 # Production environment
 [env.production]
-name = "llms-txt-worker-production"
 vars = { ENVIRONMENT = "production", CACHE_TTL = "86400", RATE_LIMIT_REQUESTS = "100", RATE_LIMIT_WINDOW = "60", ANALYTICS_ENABLED = "true" }
+
+# Observability and monitoring
+[observability]
+enabled = true
+head_sampling_rate = 1
+
+# Performance and limits
+[limits]
+cpu_ms = 50

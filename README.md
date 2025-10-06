@@ -60,26 +60,46 @@ cloudflare-workers/
 ├── .cursorrules              # Cursor AI IDE configuration
 ├── .clinerules               # Cline AI IDE configuration
 ├── .aiderules                # Aider AI IDE configuration
+├── CLAUDE.md                 # Claude Code configuration and context
 ├── .github/
 │   ├── workflows/            # CI/CD pipelines
+│   │   └── deploy.yml        # GitHub Actions deployment workflow
 │   └── copilot-instructions.md
 ├── docs/
 │   ├── SEO-GEO-GUIDE.md     # SEO & GEO optimization guide
 │   ├── WORKER-TEMPLATE.md   # Template for new workers
 │   └── DEPLOYMENT.md        # Deployment procedures
-├── llms.txt                  # AI crawler optimization
+├── llms.txt                  # AI crawler optimization guide
 ├── llms-full.txt             # Comprehensive AI content map
 ├── robots.txt.template       # robots.txt template
-├── reverse-proxy-ywca/      # Reverse proxy worker
+├── reverse-proxy-ywca/       # Main traffic routing worker (CRITICAL)
 │   ├── src/
 │   │   └── worker.js
 │   ├── wrangler.toml
-│   └── README.md
-├── sitemap-ywcaofmissoula-com/  # Sitemap generation worker
+│   ├── README.md
+│   └── CLAUDE.md
+├── sitemap-ywcaofmissoula-com/  # Sitemap generation worker (HIGH)
 │   ├── src/
-│   │   └── worker.js
+│   │   └── worker.ts
 │   ├── wrangler.toml
-│   └── README.md
+│   ├── package.json
+│   ├── README.md
+│   └── CLAUDE.md
+├── dynamic-robots-generator-ywcaofmissoula-com/  # Dynamic robots.txt (HIGH)
+│   ├── src/
+│   │   └── worker.ts
+│   ├── wrangler.toml
+│   ├── package.json
+│   ├── README.md
+│   └── CLAUDE.md
+├── llms-txt-worker/          # AI optimization file server (MEDIUM)
+│   ├── src/
+│   │   └── worker.ts
+│   ├── wrangler.toml
+│   ├── package.json
+│   ├── README.md
+│   └── CLAUDE.md
+├── robots-txt-worker/        # Legacy robots.txt worker (deprecated)
 └── README.md                 # This file
 ```
 
@@ -90,42 +110,96 @@ cloudflare-workers/
 ### Active Workers
 
 #### 1. Reverse Proxy (`reverse-proxy-ywca`)
-**Purpose**: Route and manage traffic to YWCAOfMissoula.com
+**Purpose**: Main traffic routing and management for YWCAOfMissoula.com
+**Priority**: CRITICAL - Handles ALL site traffic
+
 **Features**:
-- Traffic routing and load balancing
-- Security header injection
+- Traffic routing to Super.so backend
+- Security header injection (CSP, HSTS, XSS protection)
 - Request/response modification
 - Analytics tracking
+- Error handling and resilience
 
-**Routes**: `ywcaofmissoula.com/*`
+**Routes**:
+- `ywcaofmissoula.com/*`
+
+**Configuration**: Production, staging, and development environments configured
+
+---
 
 #### 2. Sitemap Generator (`sitemap-ywcaofmissoula-com`)
-**Purpose**: Dynamically generate sitemap.xml
+**Purpose**: Dynamically generate XML sitemaps for SEO optimization
+**Priority**: HIGH - Critical for search engine discoverability
+
 **Features**:
-- Notion database integration
-- Dynamic page discovery
+- Multiple sitemap support (index, pages, constitutional, documents, complaints)
 - Priority and change frequency calculation
-- Multiple sitemap support (index, pages, documents)
+- Dynamic generation from content
+- Category-specific sitemaps
+- Observability and monitoring enabled
 
-**Route**: `ywcaofmissoula.com/sitemap.xml`
+**Routes**:
+- `ywcaofmissoula.com/sitemap.xml`
+- `www.ywcaofmissoula.com/sitemap.xml`
+- `ywcaofmissoula.com/sitemap-index.xml`
+- `ywcaofmissoula.com/sitemap-pages.xml`
+- `ywcaofmissoula.com/sitemap-constitutional.xml`
+- `ywcaofmissoula.com/sitemap-documents.xml`
+- `ywcaofmissoula.com/sitemap-complaints.xml`
 
-### Planned Workers
+**Configuration**: TypeScript-based with environment-specific caching (TTL: 300s dev, 1800s staging, 3600s production)
 
-#### 3. robots.txt Generator
+---
+
+#### 3. Dynamic robots.txt Generator (`dynamic-robots-generator-ywcaofmissoula-com`)
 **Purpose**: Dynamic robots.txt with AI crawler optimization
-**Status**: Template ready, implementation pending
+**Priority**: HIGH - Controls crawler access to entire platform
 
-#### 4. llms.txt Server
-**Purpose**: Serve AI optimization files (llms.txt, llms-full.txt)
-**Status**: Files ready, worker implementation pending
+**Features**:
+- AI crawler-specific directives (GPTBot, Claude-Web, Google-Extended, Perplexity)
+- Traditional SEO optimization (Googlebot, Bing)
+- Security (blocks malicious crawlers)
+- Environment-aware rules (dev/staging/production)
+- KV namespace caching
+- Rate limiting support
 
-#### 5. Security Headers
-**Purpose**: Inject comprehensive HTTP security headers
-**Status**: Can be integrated into reverse proxy or standalone
+**Routes**:
+- `ywcaofmissoula.com/robots.txt`
+- `www.ywcaofmissoula.com/robots.txt`
 
-#### 6. Analytics Enhancer
-**Purpose**: Enhanced analytics and custom event tracking
-**Status**: Planning phase
+**Configuration**: TypeScript with KV binding for caching, observability enabled
+
+---
+
+#### 4. llms.txt Worker (`llms-txt-worker`)
+**Purpose**: Serve AI optimization files for Generative Engine Optimization (GEO)
+**Priority**: MEDIUM - Important for AI discoverability
+
+**Features**:
+- Serves `llms.txt` (AI optimization guide)
+- Serves `llms-full.txt` (comprehensive content map)
+- Health check endpoint
+- Environment-specific caching (86400s production, 3600s dev)
+- Rate limiting for crawler management
+
+**Routes**:
+- `ywcaofmissoula.com/llms.txt`
+- `ywcaofmissoula.com/llms-full.txt`
+- `ywcaofmissoula.com/health`
+
+**Configuration**: TypeScript with optional KV namespace for content caching
+
+---
+
+### Deployment Status
+
+All four workers are configured and deployed with:
+- ✅ Production environment configurations
+- ✅ Staging and development environments
+- ✅ Shared routes across environments
+- ✅ Observability and monitoring enabled
+- ✅ Account ID configured for GitHub Actions deployment
+- ✅ Environment-specific variables (caching, analytics, rate limiting)
 
 ---
 
@@ -292,6 +366,20 @@ wrangler deployments list
 # Rollback to previous version
 wrangler rollback [deployment-id]
 ```
+
+### Recent Deployment Fixes
+
+The following issues were identified and resolved in recent deployments:
+
+1. **Account ID Configuration**: Added `account_id = "e6537b26b3f9444de8e670aa4442fd6e"` to all wrangler.toml files for GitHub Actions compatibility
+
+2. **Route Consolidation**: Removed environment-specific worker names (e.g., `-dev`, `-staging`, `-production` suffixes) and moved routes to shared configuration for consistent deployment
+
+3. **Environment Variables**: Configured environment-specific settings in `[env.development]`, `[env.staging]`, and `[env.production]` sections
+
+4. **Workers Dev Mode**: Disabled `workers_dev = false` in production workers to prevent conflicts with custom routes
+
+5. **GitHub Actions Integration**: Ensured all environment variables (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`) are properly passed to wrangler CLI
 
 ---
 
@@ -546,12 +634,31 @@ Special thanks to:
 
 ## Version History
 
+### v1.2.0 (2025-01)
+- ✅ All four workers fully configured and deployed
+- ✅ Environment-specific configurations (dev/staging/production)
+- ✅ Observability and monitoring enabled
+- ✅ GitHub Actions CI/CD pipeline configured
+- ✅ Route consolidation (removed environment-specific worker names)
+- ✅ Account ID unified across all workers (e6537b26b3f9444de8e670aa4442fd6e)
+- ✅ TypeScript migration for sitemap, robots, and llms-txt workers
+- ✅ KV namespace bindings configured
+- ✅ Comprehensive CLAUDE.md files for each worker
+
+### v1.1.0 (2025-01)
+- Added dynamic robots.txt generator worker
+- Added llms.txt worker for AI optimization
+- Expanded sitemap generator with multiple sitemap types
+- Implemented environment-aware caching strategies
+- Added rate limiting support
+- Enhanced security configurations
+
 ### v1.0.0 (2025-01)
 - Initial repository setup
 - Reverse proxy worker
-- Sitemap generator
-- SEO/GEO optimization files
-- AI IDE configuration
+- Basic sitemap generator
+- SEO/GEO optimization files (llms.txt, llms-full.txt)
+- AI IDE configuration (.cursorrules, .clinerules, .aiderules)
 - Comprehensive documentation
 
 ---
