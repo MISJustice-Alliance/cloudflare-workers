@@ -17,12 +17,9 @@ interface Env {
   CACHE_TTL?: string;
   SITEMAP_CACHE?: string;
   ANALYTICS_ENABLED?: string;
-  
+
   // KV namespace for caching
   SITEMAP_CACHE_KV?: KVNamespace;
-  
-  // Analytics and monitoring
-  ANALYTICS_ENABLED?: string;
 }
 
 interface SitemapUrl {
@@ -457,18 +454,20 @@ function getAllPageUrls(baseUrl: string, today: string): SitemapUrl[] {
  * Generate comprehensive sitemap with SEO and GEO optimization
  */
 function generateAdvancedSitemap(config: SitemapConfig, userAgent: string): string {
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0] ?? '';
+  const baseUrl = (config.baseUrl ?? 'https://ywcaofmissoula.com') as string;
 
   // Get all page URLs
-  const urls: SitemapUrl[] = getAllPageUrls(config.baseUrl, today);
+  const urls = getAllPageUrls(baseUrl, today);
 
   // Generate XML sitemap with enhanced features
   const urlEntries = urls.map(url => {
+    const changefreq = url.changefreq || config.defaultChangefreq;
     let entry = `  <url>
     <loc>${escapeXml(url.loc)}</loc>
     <lastmod>${url.lastmod}</lastmod>
     <priority>${url.priority}</priority>
-    <changefreq>${url.changefreq || config.defaultChangefreq}</changefreq>`;
+    <changefreq>${changefreq}</changefreq>`;
 
     // Add image sitemap entries
     if (url.images && url.images.length > 0) {
@@ -541,16 +540,18 @@ function filterUrlsByCategory(urls: SitemapUrl[], categories: string[]): Sitemap
  * Generate category-specific sitemap
  */
 function generateCategorySitemap(config: SitemapConfig, categories: string[]): string {
-  const today = new Date().toISOString().split('T')[0];
-  const allUrls = getAllPageUrls(config.baseUrl, today);
+  const today = new Date().toISOString().split('T')[0] ?? '';
+  const baseUrl = (config.baseUrl ?? 'https://ywcaofmissoula.com') as string;
+  const allUrls = getAllPageUrls(baseUrl, today);
   const filteredUrls = filterUrlsByCategory(allUrls, categories);
 
   const urlEntries = filteredUrls.map(url => {
+    const changefreq = url.changefreq || config.defaultChangefreq;
     return `  <url>
     <loc>${escapeXml(url.loc)}</loc>
     <lastmod>${url.lastmod}</lastmod>
     <priority>${url.priority}</priority>
-    <changefreq>${url.changefreq || config.defaultChangefreq}</changefreq>
+    <changefreq>${changefreq}</changefreq>
   </url>`;
   }).join('\n');
 
@@ -877,10 +878,8 @@ async function handleCategorySitemapRequest(
   let sitemapContent: string;
 
   if (env.SITEMAP_CACHE_KV) {
-    const cache = new SitemapCache(
-      env.SITEMAP_CACHE_KV,
-      parseInt(env.CACHE_TTL || '3600')
-    );
+    const cacheTTL = env.CACHE_TTL ? parseInt(env.CACHE_TTL) : 3600;
+    const cache = new SitemapCache(env.SITEMAP_CACHE_KV, cacheTTL);
 
     const cacheKey = cache.generateCacheKey(sitemapType, userAgent);
     const cached = await cache.get(cacheKey);
