@@ -25,11 +25,23 @@ pattern = "ywcaofmissoula.com/llms.txt"
 zone_name = "ywcaofmissoula.com"
 
 [[routes]]
+pattern = "www.ywcaofmissoula.com/llms.txt"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
 pattern = "ywcaofmissoula.com/llms-full.txt"
 zone_name = "ywcaofmissoula.com"
 
 [[routes]]
+pattern = "www.ywcaofmissoula.com/llms-full.txt"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
 pattern = "ywcaofmissoula.com/health"
+zone_name = "ywcaofmissoula.com"
+
+[[routes]]
+pattern = "www.ywcaofmissoula.com/health"
 zone_name = "ywcaofmissoula.com"
 
 # Development environment
