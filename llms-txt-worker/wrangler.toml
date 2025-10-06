@@ -1,4 +1,4 @@
-name = "llms-txt-worker"
+name = "llms-txt-worker-production"
 main = "src/worker.ts"
 compatibility_date = "2024-01-01"
 account_id = "e6537b26b3f9444de8e670aa4442fd6e"

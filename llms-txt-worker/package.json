@@ -1,5 +1,5 @@
 {
-  "name": "llms-txt-ywca",
+  "name": "llms-txt-worker-production",
   "version": "1.0.0",
   "description": "AI optimization file server for YWCAOfMissoula.com - serves llms.txt and llms-full.txt for LLM crawlers",
   "main": "src/worker.ts",
