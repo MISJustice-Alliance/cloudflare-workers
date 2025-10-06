@@ -1,12 +1,8 @@
 name = "reverse-proxy-ywca"
 main = "src/worker.js"
-workers_dev = true
+workers_dev = false
 compatibility_date = "2025-10-03"
 account_id = "7b2f784c5831c5cb430bad3d4eb6d0a3"
-
-[[routes]]
-pattern = "ywcaofmissoula.com/*"
-zone_name = "ywcaofmissoula.com"
 
 [observability]
 enabled = true
@@ -26,3 +22,7 @@ vars = { ENVIRONMENT = "staging" }
 [env.production]
 name = "reverse-proxy-ywca-production"
 vars = { ENVIRONMENT = "production" }
+
+[[env.production.routes]]
+pattern = "ywcaofmissoula.com/*"
+zone_name = "ywcaofmissoula.com"
