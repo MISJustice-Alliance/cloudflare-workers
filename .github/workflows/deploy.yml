@@ -22,13 +22,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      
+          node-version: '20'
+
       - name: Install dependencies
         run: |
-          cd reverse-proxy-ywca && npm ci
-          cd ../sitemap-ywcaofmissoula-com && npm ci
-          cd ../llms-txt-worker && npm ci
+          cd reverse-proxy-ywca && npm install
+          cd ../sitemap-ywcaofmissoula-com && npm install
+          cd ../llms-txt-worker && npm install
 
       - name: Run tests
         run: |
@@ -55,8 +55,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      
+          node-version: '20'
+
       - name: Deploy Reverse Proxy (Dev)
         uses: cloudflare/wrangler-action@v3
         with:
@@ -94,8 +94,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      
+          node-version: '20'
+
       - name: Deploy Reverse Proxy (Staging)
         uses: cloudflare/wrangler-action@v3
         with:
@@ -136,8 +136,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      
+          node-version: '20'
+
       - name: Deploy Reverse Proxy (Production)
         uses: cloudflare/wrangler-action@v3
         with:
