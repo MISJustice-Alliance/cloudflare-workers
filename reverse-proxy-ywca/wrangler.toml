@@ -1,4 +1,4 @@
-name = "reverse-proxy-ywca"
+name = "reverse-proxy-ywca-production"
 main = "src/worker.js"
 workers_dev = false
 compatibility_date = "2025-10-03"
