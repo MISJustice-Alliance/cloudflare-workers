@@ -4,23 +4,19 @@ workers_dev = false
 compatibility_date = "2025-10-03"
 account_id = "e6537b26b3f9444de8e670aa4442fd6e"
 
+# Environment variables
+[vars]
+ENVIRONMENT = "production"
+
 [observability]
 enabled = true
 head_sampling_rate = 1
 
-# Routes - shared across all environments
+# Routes
 [[routes]]
 pattern = "ywcaofmissoula.com/*"
 zone_name = "ywcaofmissoula.com"
 
-# Development environment
-[env.development]
-vars = { ENVIRONMENT = "development" }
-
-# Staging environment
-[env.staging]
-vars = { ENVIRONMENT = "staging" }
-
-# Production environment
-[env.production]
-vars = { ENVIRONMENT = "production" }
+# Note: This worker is pre-configured for production
+# Environment configs removed to prevent name duplication (reverse-proxy-ywca-production-production)
+# Deploy with: wrangler deploy (no --env flag needed)
