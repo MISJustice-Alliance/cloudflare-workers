@@ -7,6 +7,7 @@ account_id = "e6537b26b3f9444de8e670aa4442fd6e"
 # Environment variables
 [vars]
 ENVIRONMENT = "production"
+ANALYTICS_TOKEN = "d42a1351b9ef4539894a367233dc068e"
 
 [observability]
 enabled = true

@@ -1,5 +1,28 @@
+/**
+ * Injects Cloudflare Web Analytics script into HTML
+ * @param {string} html - The HTML content
+ * @param {string} token - Cloudflare Web Analytics token
+ * @returns {string} HTML with analytics script injected
+ */
+function injectAnalytics(html, token) {
+  const analyticsScript = `<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "${token}"}'></script><!-- End Cloudflare Web Analytics -->`;
+
+  // Try to inject before </head> tag
+  if (html.includes('</head>')) {
+    return html.replace('</head>', `${analyticsScript}\n</head>`);
+  }
+
+  // Fallback: inject before </body> tag
+  if (html.includes('</body>')) {
+    return html.replace('</body>', `${analyticsScript}\n</body>`);
+  }
+
+  // Last resort: append to end of HTML
+  return html + analyticsScript;
+}
+
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const url = new URL(request.url);
 
     // Target backend
@@ -56,6 +79,10 @@ export default {
           new RegExp(`//${backendHost.replace(/\./g, '\\.')}`, 'g'),
           `//${proxyHost}`
         );
+
+        // Inject Cloudflare Web Analytics
+        const analyticsToken = env.ANALYTICS_TOKEN || 'd42a1351b9ef4539894a367233dc068e';
+        body = injectAnalytics(body, analyticsToken);
 
         return new Response(body, {
           status: response.status,
